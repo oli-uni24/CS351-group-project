@@ -3,7 +3,7 @@ package org.strathclyde.model;
 public class MaintenanceTeam {
     private final String id;
     private TeamState state;
-    private SpaceTransport assignedTransport;
+    private Transport assignedTransport;
 
     public MaintenanceTeam(String id) {
         this.id = id;
@@ -14,7 +14,7 @@ public class MaintenanceTeam {
     public String getId() { return id; }
     public synchronized TeamState getState() { return state; }
 
-    public synchronized void assignTeam(SpaceTransport transport) {
+    public synchronized void assignTeam(Transport transport) {
         if (this.state == TeamState.BUSY) {
             throw new IllegalStateException("Team is already busy.");
         }

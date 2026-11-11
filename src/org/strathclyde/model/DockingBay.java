@@ -3,7 +3,7 @@ package org.strathclyde.model;
 public class DockingBay {
     private final String id;
     private BayState state;
-    private SpaceTransport allocatedTransport;
+    private Transport allocatedTransport;
 
     public DockingBay(String id) {
         this.id = id;
@@ -14,10 +14,10 @@ public class DockingBay {
     // Getters
     public String getId() { return id; }
     public synchronized BayState getState() { return state; }
-    public synchronized SpaceTransport getAllocatedTransport() { return allocatedTransport; }
+    public synchronized Transport getAllocatedTransport() { return allocatedTransport; }
 
     // Synchronized method to prevent race conditions
-    public synchronized void assignBay(SpaceTransport transport) {
+    public synchronized void assignBay(Transport transport) {
         if (this.state != BayState.AVAILABLE) {
             throw new IllegalStateException("Cannot assign transport. Bay is " + this.state);
         }
@@ -45,7 +45,7 @@ public class DockingBay {
 
     // Used during an exchange
     public synchronized void swapTransport(DockingBay otherBay) {
-        SpaceTransport temp = this.allocatedTransport;
+        Transport temp = this.allocatedTransport;
         this.allocatedTransport = otherBay.allocatedTransport;
         otherBay.allocatedTransport = temp;
     }
