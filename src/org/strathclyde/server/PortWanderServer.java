@@ -1,3 +1,11 @@
+package org.strathclyde.server;
+
+import java.io.IOException;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 public class PortWanderServer {
 
     private final static int PORT = 50000;
@@ -7,14 +15,10 @@ public class PortWanderServer {
     private ServerSocket serverSocket = null; // listens for incoming connections
 
     public void startServer() throws IOException {
-        Socket socket = null; // sends outgoing connections
-
-        try {
-            // create the server socket to listen to incoming requests
-            serverSocket = new ServerSocket(PORT);
-            System.out.println("Server listening on port " + PORT);
-            acceptConnections();
-        }
+        // create the server socket to listen to incoming requests
+        serverSocket = new ServerSocket(PORT);
+        System.out.println("Server listening on port " + PORT);
+        acceptConnections();
     }
 
     private void acceptConnections() {
