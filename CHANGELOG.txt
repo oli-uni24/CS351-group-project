@@ -1,4 +1,8 @@
 12-11-2026
+scott:
+- added CheckRole class
+- updated Actions enum
+- Changed OPERATOR to CLIENT in ROLE enum because the project spec refers to client more often than operator
 
 11-11-2026
 olivia:
