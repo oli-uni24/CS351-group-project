@@ -13,12 +13,24 @@ public class TransportController {
     }
 
     public void allocateBay(Transport transport, DockingBay bay) {
-        // Check valid state before allocating (Spec rule: must be WAITING)
-        if (transport.getState() == TransportState.WAITING) {
+
+        synchronized (transport) {
+
+            // Check whether the transport is WAITING
+            if (transport.getState() != TransportState.WAITING) {
+                throw new IllegalStateException(
+                        "Transport must be WAITING to dock."
+                );
+            }
+
+            // Allocate the bay
             bayController.allocateBay(bay, transport);
+
+            // Update the transport's reference to the bay
+            transport.setDockingBay(bay);
+
+            // Change transport state
             transport.setState(TransportState.DOCKED);
-        } else {
-            throw new IllegalStateException("Transport must be WAITING to dock.");
         }
     }
 
