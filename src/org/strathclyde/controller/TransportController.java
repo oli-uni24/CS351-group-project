@@ -4,12 +4,15 @@ import org.strathclyde.model.DockingBay;
 import org.strathclyde.model.MaintenanceTeam;
 import org.strathclyde.model.Transport;
 import org.strathclyde.model.TransportState;
+import org.strathclyde.service.EventLog;
 
 public class TransportController {
     private final DockingBayController bayController;
+    private final EventLog eventLog;
 
-    public TransportController(DockingBayController bayController) {
+    public TransportController(DockingBayController bayController, EventLog eventLog) {
         this.bayController = bayController;
+        this.eventLog = eventLog;
     }
 
     public void allocateBay(Transport transport, DockingBay bay) {
@@ -31,6 +34,14 @@ public class TransportController {
 
             // Change transport state
             transport.setState(TransportState.DOCKED);
+
+            // Record successful bay allocation
+            eventLog.recordEvent(
+                    "BAY_ALLOCATION",
+                    transport.getId(),
+                    bay.getId(),
+                    "Successfully allocated docking bay"
+            );
         }
     }
 
@@ -46,6 +57,14 @@ public class TransportController {
 
             transport.setMaintenanceTeam(team);
             transport.setState(TransportState.SERVICING);
+
+            // Record successful maintenance assignment
+            eventLog.recordEvent(
+                    "MAINTENANCE_ASSIGNMENT",
+                    transport.getId(),
+                    team.getId(),
+                    "Maintenance team assigned"
+            );
         }
     }
 
@@ -57,6 +76,14 @@ public class TransportController {
                 transport.setMaintenanceTeam(null);
             }
             transport.setState(TransportState.READY);
+
+            // Record successful maintenance completion
+            eventLog.recordEvent(
+                    "MAINTENANCE_COMPLETED",
+                    transport.getId(),
+                    team.getId(),
+                    "Maintenance completed successfully"
+            );
         }
     }
 }
