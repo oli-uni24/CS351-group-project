@@ -1,0 +1,14 @@
+import org.junit.jupiter.api.Test;
+
+public class CheckRoleTest {
+
+    @Test
+    void whenRoleIsClientThenClientCanPerformClientActions(){
+
+        //arrange
+
+
+
+    }
+
+}

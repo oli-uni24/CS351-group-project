@@ -1,5 +1,7 @@
 package org.strathclyde.server;
 
+import org.strathclyde.common.Role;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -9,6 +11,7 @@ import java.net.Socket;
 public class ClientSessionHandler implements Runnable {
     private final Socket socket;
     private PrintWriter out;
+    private Role connectedUsersRole;
 
     public ClientSessionHandler(Socket socket) {
         this.socket = socket;
@@ -44,6 +47,19 @@ public class ClientSessionHandler implements Runnable {
         String command = parts[0].toUpperCase();
 
         switch (command) {
+            //assign user role
+            case "CLIENT":
+                connectedUsersRole = Role.CLIENT;           //confirm with Olivia if this fits wit her implementation else move it
+                System.out.println("DEBUG: The terminal is a client");
+                sendResponse("You have successfully connected to the server as a client");
+                return true;
+            case "ADMIN":
+                connectedUsersRole = Role.ADMIN;
+                System.out.println("DEBUG: The terminal is an admin");
+                sendResponse("You have successfully connected to the server as an admin");
+                return true;
+
+            //user operations
             case "HELLO":
                 sendResponse("OK WORLD");
                 return true;

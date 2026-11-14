@@ -1,3 +1,9 @@
+14-11-2026
+scott:
+- user is asked what their role is when they start a terminal, the role is then send to the server
+- teh server currently does nothing with the role however the plan is to user the role when controllers are called to ensure that a connected user can perform certain operations
+- Need to confirm with olivia if this fits with her implementation
+
 12-11-2026
 scott:
 - added CheckRole class
