@@ -6,12 +6,12 @@ import java.util.List;
 //should this be a singleton class? If so, how would that affect threading?
 public class CheckRole {
 
-    private static ArrayList<Action> clientActions;
-    private static ArrayList<Action> adminActions;
+    private static final ArrayList<Action> clientActions;
+    private static final ArrayList<Action> adminActions;
 
     //need to clarify with Warren if an admin can perform admin only operations or if an admin can perform admin operations and operator operations. At this moment in time I would assume that the admins cannot perform client actions
 
-    public CheckRole() {
+    static {
         clientActions = new ArrayList<>(List.of(
                 Action.VIEW_TRANSPORT,
                 Action.VIEW_BAY,
