@@ -1,3 +1,5 @@
+package org.strathclyde.common;
+
 public enum Action {
     ADD_TRANSPORT,
     VIEW_TRANSPORT,
