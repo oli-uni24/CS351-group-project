@@ -3,9 +3,11 @@ package org.strathclyde.controller;
 import org.strathclyde.model.DockingBay;
 import org.strathclyde.model.MaintenanceTeam;
 import org.strathclyde.model.Transport;
+import org.strathclyde.common.ServerResponse;
 
 import java.util.ArrayList;
 import java.util.List;
+//TODO: remove not implemented method when implemented
 
 public class PortController {
     // These lists act as your "Database" in memory
@@ -59,4 +61,21 @@ public class PortController {
     public List<Transport> getTransports() { return transports; }
     public List<DockingBay> getDockingBays() { return dockingBays; }
     public List<MaintenanceTeam> getMaintenanceTeams() { return maintenanceTeams; }
+
+    //all transports, bays, teams and cargo
+    // message holds one item per line
+    public ServerResponse viewResources(){
+        return notImplemented();
+    }
+
+    //event log
+    // message holds one event per line
+    public ServerResponse viewEventLog() {
+        return notImplemented();
+    }
+
+    private ServerResponse notImplemented() {
+        return new ServerResponse(false, "Nothing here yet");
+    }
+
 }

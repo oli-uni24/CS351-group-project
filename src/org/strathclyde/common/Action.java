@@ -1,0 +1,17 @@
+public enum Action {
+    ADD_TRANSPORT,
+    VIEW_TRANSPORT,
+    MANAGE_TRANSPORT, //todo: change this or clarify meaning
+    LOAD_CARGO,
+    UNLOAD_CARGO,
+    TRANSFER_CARGO,
+    OPEN_BAY,
+    CLOSE_BAY,
+    ALLOCATE_BAY,
+    EXCHANGE_BAY,
+    VIEW_EVENT_LOG,
+    VIEW_RESOURCES,
+    VIEW_CONNECTED_CLIENTS,
+    ASSIGN_MAINTENANCE_TEAM,
+    COMPLETE_MAINTENANCE
+    }

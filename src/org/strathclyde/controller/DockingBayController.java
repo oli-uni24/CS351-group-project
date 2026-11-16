@@ -4,6 +4,9 @@ import org.strathclyde.model.DockingBay;
 import org.strathclyde.model.Transport;
 import org.strathclyde.service.EventLog;
 import org.strathclyde.model.TransportState;
+import org.strathclyde.common.ServerResponse;
+
+//TODO: remove not implemented method when implemented
 
 public class DockingBayController {
     private final EventLog eventLog;
@@ -94,5 +97,26 @@ public class DockingBayController {
         } else {
             bay.closeBay(); // This will throw an error if the bay is OCCUPIED
         }
+    }
+
+    public ServerResponse allocateBay(String transportId, String bayId) {
+        return notImplemented();
+    }
+
+    public ServerResponse exchangeBays(String transportId, String bayId) {
+        return notImplemented();
+    }
+
+    public ServerResponse openBay(String bayId) {
+        return notImplemented();
+    }
+
+    public ServerResponse closeBay(String bayId) {
+        return notImplemented();
+    }
+
+
+    private ServerResponse notImplemented() {
+        return new ServerResponse(false, "Nothing here yet");
     }
 }
