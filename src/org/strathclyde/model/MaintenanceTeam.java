@@ -13,14 +13,19 @@ public class MaintenanceTeam {
 
     public String getId() { return id; }
     public synchronized TeamState getState() { return state; }
+    public synchronized Transport getAssignedTransport() { return assignedTransport; }
 
     public synchronized void assignTeam(Transport transport) {
+        if (transport == null) {
+            throw new IllegalArgumentException("Transport cannot be null.");
+        }
         if (this.state == TeamState.BUSY) {
             throw new IllegalStateException("Team is already busy.");
         }
         this.assignedTransport = transport;
         this.state = TeamState.BUSY;
     }
+
 
     public synchronized void completeMaintenance() {
         if (this.state == TeamState.BUSY) {

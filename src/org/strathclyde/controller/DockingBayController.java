@@ -5,21 +5,27 @@ import org.strathclyde.model.Transport;
 import org.strathclyde.service.EventLog;
 import org.strathclyde.model.TransportState;
 import org.strathclyde.common.ServerResponse;
+import java.util.List;
 
 //TODO: remove not implemented method when implemented
 
 public class DockingBayController {
     private final EventLog eventLog;
+    private final List<DockingBay> dockingBays;
+    private final List<Transport> transports;
 
-    public DockingBayController(EventLog eventLog) {
+    public DockingBayController(EventLog eventLog, List<DockingBay> dockingBays, List<Transport> transports) {
         this.eventLog = eventLog;
+        this.dockingBays = dockingBays;
+        this.transports = transports;
     }
 
     // Simple method to allocate a bay
     public void allocateBay(DockingBay bay, Transport transport) {
         // The synchronized keyword in DockingBay.assignBay() handles the thread safety here.
         bay.assignBay(transport);
-        // (In the real app, my teams code will update the transport's state to DOCKED)
+        // Update the transport's docking bay reference
+        transport.setDockingBay(bay);
     }
 
     /**
@@ -100,19 +106,163 @@ public class DockingBayController {
     }
 
     public ServerResponse allocateBay(String transportId, String bayId) {
-        return notImplemented();
+
+        Transport transport = null;
+        DockingBay bay = null;
+
+        // Find the transport using its ID
+        for (Transport t : transports) {
+            if (t.getId().equals(transportId)) {
+                transport = t;
+                break;
+            }
+        }
+
+        // Find the docking bay using its ID
+        for (DockingBay b : dockingBays) {
+            if (b.getId().equals(bayId)) {
+                bay = b;
+                break;
+            }
+        }
+
+        // Check if transport exists
+        if (transport == null) {
+            return new ServerResponse(false, "Transport not found.");
+        }
+
+        // Check if docking bay exists
+        if (bay == null) {
+            return new ServerResponse(false, "Docking bay not found.");
+        }
+
+        // Try to allocate the bay
+        try {
+            allocateBay(bay, transport);
+
+            eventLog.recordEvent(
+                    "BAY_ALLOCATION",
+                    transportId,
+                    bayId,
+                    "Transport allocated to docking bay"
+            );
+
+            return new ServerResponse(true, "Bay allocated successfully.");
+
+        } catch (IllegalStateException | IllegalArgumentException e) {
+            return new ServerResponse(false, e.getMessage());
+        }
     }
 
-    public ServerResponse exchangeBays(String transportId, String bayId) {
-        return notImplemented();
+    public ServerResponse exchangeBays(String firstTransportId, String secondTransportId) {
+
+        Transport firstTransport = null;
+        Transport secondTransport = null;
+
+        // Find the first transport
+        for (Transport t : transports) {
+            if (t.getId().equals(firstTransportId)) {
+                firstTransport = t;
+                break;
+            }
+        }
+
+        // Find the second transport
+        for (Transport t : transports) {
+            if (t.getId().equals(secondTransportId)) {
+                secondTransport = t;
+                break;
+            }
+        }
+
+        // Check whether both transports were found
+        if (firstTransport == null) {
+            return new ServerResponse(false, "First transport not found.");
+        }
+
+        if (secondTransport == null) {
+            return new ServerResponse(false, "Second transport not found.");
+        }
+
+        try {
+            // Call the existing method that performs the exchange
+            exchangeBay(firstTransport, secondTransport);
+
+            return new ServerResponse(true, "Docking bays exchanged successfully.");
+
+        } catch (IllegalStateException | IllegalArgumentException e) {
+            return new ServerResponse(false, e.getMessage());
+        }
     }
 
     public ServerResponse openBay(String bayId) {
-        return notImplemented();
+
+        DockingBay bay = null;
+
+        // Find the docking bay
+        for (DockingBay b : dockingBays) {
+            if (b.getId().equals(bayId)) {
+                bay = b;
+                break;
+            }
+        }
+
+        // Check if the bay exists
+        if (bay == null) {
+            return new ServerResponse(false, "Docking bay not found.");
+        }
+
+        try {
+            // Open the bay
+            openOrCloseBay(bay, true);
+
+            eventLog.recordEvent(
+                    "BAY_OPENED",
+                    "N/A",
+                    bayId,
+                    "Docking bay opened"
+            );
+
+            return new ServerResponse(true, "Docking bay opened successfully.");
+
+        } catch (IllegalStateException | IllegalArgumentException e) {
+            return new ServerResponse(false, e.getMessage());
+        }
     }
 
     public ServerResponse closeBay(String bayId) {
-        return notImplemented();
+
+        DockingBay bay = null;
+
+        // Find the docking bay
+        for (DockingBay b : dockingBays) {
+            if (b.getId().equals(bayId)) {
+                bay = b;
+                break;
+            }
+        }
+
+        // Check if the bay exists
+        if (bay == null) {
+            return new ServerResponse(false, "Docking bay not found.");
+        }
+
+        try {
+            // Close the bay
+            openOrCloseBay(bay, false);
+
+            eventLog.recordEvent(
+                    "BAY_CLOSED",
+                    "N/A",
+                    bayId,
+                    "Docking bay closed"
+            );
+
+            return new ServerResponse(true, "Docking bay closed successfully.");
+
+        } catch (IllegalStateException | IllegalArgumentException e) {
+            return new ServerResponse(false, e.getMessage());
+        }
     }
 
 

@@ -32,8 +32,8 @@ public class TransportController {
             // Allocate the bay
             bayController.allocateBay(bay, transport);
 
-            // Update the transport's reference to the bay
-            transport.setDockingBay(bay);
+//            // Update the transport's reference to the bay
+//            transport.setDockingBay(bay);
 
             // Change transport state
             transport.setState(TransportState.DOCKED);
@@ -51,6 +51,9 @@ public class TransportController {
     public void assignTeam(MaintenanceTeam team, Transport transport) {
         // Lock the transport to prevent two teams being assigned at once
         synchronized (transport) {
+            if(team == null){
+                throw new IllegalStateException("Maintenance team cannot be null.");
+            }
             if (transport.getState() != TransportState.DOCKED) {
                 throw new IllegalStateException("Transport must be DOCKED to receive maintenance.");
             }
@@ -72,12 +75,20 @@ public class TransportController {
     }
 
     public void completeMaintenance(Transport transport) {
-        if (transport.getState() == TransportState.SERVICING) {
-            MaintenanceTeam team = transport.getMaintenanceTeam();
-            if (team != null) {
-                team.completeMaintenance();
-                transport.setMaintenanceTeam(null);
+        synchronized (transport) {
+            if (transport.getState() != TransportState.SERVICING) {
+                throw new IllegalStateException("Transport must be SERVICING to complete maintenance.");
             }
+            MaintenanceTeam team = transport.getMaintenanceTeam();
+            if (team == null) {
+                throw new IllegalStateException(
+                        "No maintenance team assigned to this transport."
+                );
+            }
+
+            team.completeMaintenance();
+            transport.setMaintenanceTeam(null);
+
             transport.setState(TransportState.READY);
 
             // Record successful maintenance completion

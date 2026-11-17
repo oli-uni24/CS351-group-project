@@ -18,6 +18,9 @@ public class DockingBay {
 
     // Synchronized method to prevent race conditions
     public synchronized void assignBay(Transport transport) {
+        if(transport==null){
+            throw new IllegalArgumentException("Transport cannot be null");
+        }
         if (this.state != BayState.AVAILABLE) {
             throw new IllegalStateException("Cannot assign transport. Bay is " + this.state);
         }
@@ -27,7 +30,9 @@ public class DockingBay {
 
     public synchronized void releaseBay() {
         this.allocatedTransport = null;
-        this.state = BayState.AVAILABLE;
+        if (this.state !=BayState.CLOSED){
+            this.state = BayState.AVAILABLE;
+        }
     }
 
     public synchronized void closeBay() {
@@ -45,7 +50,24 @@ public class DockingBay {
 
     // Used during an exchange
     public synchronized void swapTransport(DockingBay otherBay) {
+
+        if (otherBay == null) {
+            throw new IllegalArgumentException("Other bay cannot be null.");
+        }
+
+        if (this == otherBay) {
+            throw new IllegalArgumentException(
+                    "Cannot exchange a bay with itself.");
+        }
+
+        if (this.state != BayState.OCCUPIED ||
+                otherBay.state != BayState.OCCUPIED) {
+            throw new IllegalStateException(
+                    "Both bays must be occupied.");
+        }
+
         Transport temp = this.allocatedTransport;
+
         this.allocatedTransport = otherBay.allocatedTransport;
         otherBay.allocatedTransport = temp;
     }
