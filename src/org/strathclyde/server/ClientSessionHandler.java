@@ -2,6 +2,10 @@ package org.strathclyde.server;
 
 import org.strathclyde.client.Client;
 import org.strathclyde.common.Role;
+import org.strathclyde.controller.CargoManagementController;
+import org.strathclyde.controller.DockingBayController;
+import org.strathclyde.controller.PortController;
+import org.strathclyde.controller.TransportController;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -11,14 +15,23 @@ import java.net.Socket;
 
 public class ClientSessionHandler implements Runnable {
     private final Socket socket;
-    private ClientRegistry registry;
+    private final ClientRegistry registry;
+    private final PortController portController;
+    private final DockingBayController bayController;
+    private final TransportController transportController;
+    private final CargoManagementController cargoController;
+
     private PrintWriter out;
     private Role connectedUsersRole = null; // null until connection succeeds
     private Client client = null;
 
-    public ClientSessionHandler(Socket socket, ClientRegistry registry) {
+    public ClientSessionHandler(Socket socket, ClientRegistry registry, PortController portController, DockingBayController bayController, TransportController transportController, CargoManagementController cargoController) {
         this.socket = socket;
         this.registry = registry;
+        this.portController = portController;
+        this.bayController = bayController;
+        this.transportController = transportController;
+        this.cargoController = cargoController;
     }
 
     @Override
@@ -68,6 +81,10 @@ public class ClientSessionHandler implements Runnable {
             case "QUIT":
                 sendResponse("OK bye");
                 return false;
+            //TODO: remove/fix view_resources, just tests wiring right now
+            case "VIEW_RESOURCES":
+                sendResponse(portController.viewResources().getMessage());
+                return true;
             default:
                 sendResponse("ERROR BAD_REQUEST unknown command");
                 return true;
