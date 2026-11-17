@@ -1,5 +1,8 @@
 package org.strathclyde.server;
 
+import org.strathclyde.client.Client;
+import org.strathclyde.common.Role;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -8,10 +11,14 @@ import java.net.Socket;
 
 public class ClientSessionHandler implements Runnable {
     private final Socket socket;
+    private ClientRegistry registry;
     private PrintWriter out;
+    private Role connectedUsersRole = null; // null until connection succeeds
+    private Client client = null;
 
-    public ClientSessionHandler(Socket socket) {
+    public ClientSessionHandler(Socket socket, ClientRegistry registry) {
         this.socket = socket;
+        this.registry = registry;
     }
 
     @Override
@@ -23,7 +30,9 @@ public class ClientSessionHandler implements Runnable {
         } catch (IOException e) {
             System.out.println("Client connection lost: " + e.getMessage());
         } finally {
-            //TODO: remove client from client registry here
+            if(client != null){
+                registry.removeClient(client.getId());
+            }
             try{ socket.close();} catch (IOException ignore) {}
         }
     }
@@ -38,14 +47,23 @@ public class ClientSessionHandler implements Runnable {
     }
 
     // return false when client should disconnect
-    //TODO: update with real values
     private boolean processRequest(String line){
+       if (line.isEmpty()){
+           sendResponse("ERROR empty command");
+           return true;
+       }
+
         String[] parts = line.split("\\s+");
         String command = parts[0].toUpperCase();
 
+        //only able to connect or quit before connecting
+        if (connectedUsersRole == null && !command.equals("CONNECT") && !command.equals("QUIT")){
+            sendResponse("ERROR not connected, send CONNECT client or admin first");
+            return true;
+        }
         switch (command) {
-            case "HELLO":
-                sendResponse("OK WORLD");
+            case "CONNECT":
+                handleConnect(parts);
                 return true;
             case "QUIT":
                 sendResponse("OK bye");
@@ -54,6 +72,28 @@ public class ClientSessionHandler implements Runnable {
                 sendResponse("ERROR BAD_REQUEST unknown command");
                 return true;
         }
+    }
+
+    private void handleConnect(String[] parts){
+        if (connectedUsersRole != null) {
+            sendResponse("ERROR already connected");
+            return;
+        }
+        if (parts.length !=2) {
+            sendResponse("ERROR usage: CONNECT client or admin");
+            return;
+        }
+        String requestedRole = parts[1].toUpperCase();
+        if(requestedRole.equals("CLIENT")) {
+            connectedUsersRole = Role.CLIENT;
+        } else if (requestedRole.equals("ADMIN")) {
+            connectedUsersRole = Role.ADMIN;
+        } else {
+            sendResponse("ERROR role must be client or admin");
+            return;
+        }
+        client = registry.addClient(connectedUsersRole, this);
+        sendResponse("OK connected");
     }
 
     private void sendResponse(String message){

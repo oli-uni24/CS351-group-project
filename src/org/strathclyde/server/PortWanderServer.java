@@ -10,6 +10,7 @@ public class PortWanderServer {
 
     private final static int PORT = 50000;
     private final static int MAX_CLIENTS = 20; //TODO: fixed threadpool cap?
+    private final ClientRegistry registry = new ClientRegistry();
 
     private final ExecutorService threadPool = Executors.newFixedThreadPool(MAX_CLIENTS);
     private ServerSocket serverSocket = null; // listens for incoming connections
@@ -25,7 +26,7 @@ public class PortWanderServer {
         while (!serverSocket.isClosed()) {
             try {
                 Socket socket = serverSocket.accept(); // blocks until a client connects
-                threadPool.execute(new ClientSessionHandler(socket));
+                threadPool.execute(new ClientSessionHandler(socket, registry));
             } catch (IOException e) {
                 if (!serverSocket.isClosed()) { //if its not running, socket was closed on purpose
                     System.err.println("Accept connection failed: " + e.getMessage());
