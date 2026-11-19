@@ -1,3 +1,7 @@
+19-11-2026
+scott:
+- updated PortWanderServer to use a cached thread pool
+- manual testing evidence gathered but am still investigating if automated testing can be performed
 
 15-11-2026
 scott:
