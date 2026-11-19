@@ -9,9 +9,7 @@ import java.util.concurrent.Executors;
 public class PortWanderServer {
 
     private final static int PORT = 50000;
-    private final static int MAX_CLIENTS = 20; //TODO: fixed threadpool cap?
-
-    private final ExecutorService threadPool = Executors.newFixedThreadPool(MAX_CLIENTS);
+    private final ExecutorService threadPool = Executors.newCachedThreadPool();
     private ServerSocket serverSocket = null; // listens for incoming connections
 
     public void startServer() throws IOException {
