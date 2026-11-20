@@ -29,33 +29,6 @@ public class DepartureScheduler {
         System.out.println("Departure Scheduler started.");
     }
 
-//    private void checkDepartures() {
-//        LocalDateTime now = LocalDateTime.now();
-//
-//        for (Transport transport : transports) {
-//            // lock the transport while checking it.
-//            // This prevents a client from changing its state to SERVICING while we are trying to depart it.
-//            synchronized (transport) {
-//                if (transport.getState() == TransportState.READY &&
-//                        (transport.getScheduledDeparture().isBefore(now) || transport.getScheduledDeparture().isEqual(now))) {
-//
-//                    // 1. Change state
-//                    transport.setState(TransportState.DEPARTED);
-//
-//                    // 2. Release Bay
-//                    DockingBay bay = transport.getDockingBay();
-//                    if (bay != null) {
-//                        bay.releaseBay();
-//                        transport.setDockingBay(null);
-//                    }
-//
-//                    // 3. Log Event (will add the real logging later)
-//                    System.out.println("[BACKGROUND THREAD] Transport " + transport.getId() + " has DEPARTED. Bay released.");
-//                }
-//            }
-//        }
-//    }
-
     private void checkDepartures() {
 
         LocalDateTime now = LocalDateTime.now();
