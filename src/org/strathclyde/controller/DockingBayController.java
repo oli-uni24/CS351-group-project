@@ -11,13 +11,12 @@ import java.util.List;
 
 public class DockingBayController {
     private final EventLog eventLog;
-    private final List<DockingBay> dockingBays;
-    private final List<Transport> transports;
+    private PortController portController;
 
-    public DockingBayController(EventLog eventLog, List<DockingBay> dockingBays, List<Transport> transports) {
+    public DockingBayController(EventLog eventLog, PortController portController) {
         this.eventLog = eventLog;
-        this.dockingBays = dockingBays;
-        this.transports = transports;
+        this.portController = portController;
+
     }
 
     // Simple method to allocate a bay
@@ -107,24 +106,8 @@ public class DockingBayController {
 
     public ServerResponse allocateBay(String transportId, String bayId) {
 
-        Transport transport = null;
-        DockingBay bay = null;
-
-        // Find the transport using its ID
-        for (Transport t : transports) {
-            if (t.getId().equals(transportId)) {
-                transport = t;
-                break;
-            }
-        }
-
-        // Find the docking bay using its ID
-        for (DockingBay b : dockingBays) {
-            if (b.getId().equals(bayId)) {
-                bay = b;
-                break;
-            }
-        }
+        Transport transport = portController.findTransportById(transportId);
+        DockingBay bay = portController.findDockingBayById(bayId);
 
         // Check if transport exists
         if (transport == null) {
@@ -156,24 +139,9 @@ public class DockingBayController {
 
     public ServerResponse exchangeBays(String firstTransportId, String secondTransportId) {
 
-        Transport firstTransport = null;
-        Transport secondTransport = null;
+        Transport firstTransport = portController.findTransportById(firstTransportId);
+        Transport secondTransport = portController.findTransportById(secondTransportId);
 
-        // Find the first transport
-        for (Transport t : transports) {
-            if (t.getId().equals(firstTransportId)) {
-                firstTransport = t;
-                break;
-            }
-        }
-
-        // Find the second transport
-        for (Transport t : transports) {
-            if (t.getId().equals(secondTransportId)) {
-                secondTransport = t;
-                break;
-            }
-        }
 
         // Check whether both transports were found
         if (firstTransport == null) {
@@ -197,24 +165,16 @@ public class DockingBayController {
 
     public ServerResponse openBay(String bayId) {
 
-        DockingBay bay = null;
-
-        // Find the docking bay
-        for (DockingBay b : dockingBays) {
-            if (b.getId().equals(bayId)) {
-                bay = b;
-                break;
-            }
-        }
+        DockingBay dockingBay = portController.findDockingBayById(bayId);
 
         // Check if the bay exists
-        if (bay == null) {
+        if (dockingBay == null) {
             return new ServerResponse(false, "Docking bay not found.");
         }
 
         try {
             // Open the bay
-            openOrCloseBay(bay, true);
+            openOrCloseBay(dockingBay, true);
 
             eventLog.recordEvent(
                     "BAY_OPENED",
@@ -232,24 +192,16 @@ public class DockingBayController {
 
     public ServerResponse closeBay(String bayId) {
 
-        DockingBay bay = null;
-
-        // Find the docking bay
-        for (DockingBay b : dockingBays) {
-            if (b.getId().equals(bayId)) {
-                bay = b;
-                break;
-            }
-        }
+        DockingBay dockingBay = portController.findDockingBayById(bayId);
 
         // Check if the bay exists
-        if (bay == null) {
+        if (dockingBay == null) {
             return new ServerResponse(false, "Docking bay not found.");
         }
 
         try {
             // Close the bay
-            openOrCloseBay(bay, false);
+            openOrCloseBay(dockingBay, false);
 
             eventLog.recordEvent(
                     "BAY_CLOSED",
