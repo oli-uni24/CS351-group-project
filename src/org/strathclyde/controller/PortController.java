@@ -5,19 +5,20 @@ import org.strathclyde.model.MaintenanceTeam;
 import org.strathclyde.model.Transport;
 import org.strathclyde.common.ServerResponse;
 import org.strathclyde.service.EventLog;
+import org.strathclyde.model.TransportRepository;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class PortController {
     // These lists act as your "Database" in memory
-    private final List<Transport> transports;
+    private final TransportRepository transportRepository;
     private final List<DockingBay> dockingBays;
     private final List<MaintenanceTeam> maintenanceTeams;
     private final EventLog eventLog;
 
-    public PortController(EventLog eventLog) {
-        this.transports = new ArrayList<>();
+    public PortController(EventLog eventLog, TransportRepository transportRepository) {
+        this.transportRepository = transportRepository;
         this.dockingBays = new ArrayList<>();
         this.maintenanceTeams = new ArrayList<>();
         this.eventLog = eventLog;
@@ -26,15 +27,15 @@ public class PortController {
     // --- Admin Methods ---
 
     public void addTransport(Transport transport) {
-        transports.add(transport);
+        transportRepository.addTransport(transport);
         System.out.println("Admin added transport: " + transport.getId());
     }
 
-    public void addDockingBay(DockingBay bay) {
+    public synchronized void addDockingBay(DockingBay bay) {
         dockingBays.add(bay);
     }
 
-    public void addMaintenanceTeam(MaintenanceTeam team) {
+    public synchronized void addMaintenanceTeam(MaintenanceTeam team) {
         maintenanceTeams.add(team);
     }
 
@@ -42,6 +43,9 @@ public class PortController {
 
     public void viewAllResources() {
         System.out.println("\n--- PORT WANDER STATUS ---");
+
+        List<Transport> transports = transportRepository.getAllTransports();
+
         System.out.println("Transports: " + transports.size());
         for (Transport t : transports) {
             System.out.println(" - " + t.getId() + " [" + t.getState() + "]");
@@ -60,17 +64,27 @@ public class PortController {
     }
 
     // Getters to use during integration
-    public List<Transport> getTransports() { return transports; }
-    public List<DockingBay> getDockingBays() { return dockingBays; }
-    public List<MaintenanceTeam> getMaintenanceTeams() { return maintenanceTeams; }
+    public synchronized List<Transport> getTransports() {
+        return transportRepository.getAllTransports();
+    }
+
+    public synchronized List<DockingBay> getDockingBays() {
+        return dockingBays;
+    }
+
+    public synchronized List<MaintenanceTeam> getMaintenanceTeams() {
+        return maintenanceTeams;
+    }
 
     // Added viewResources and viewEventLog
     //all transports, bays, teams and cargo
     // message holds one item per line
-    public ServerResponse viewResources(){
+    public ServerResponse viewResources() {
         StringBuilder message = new StringBuilder();
 
         message.append("--- PORT WANDER STATUS ---\n");
+
+        List<Transport> transports = transportRepository.getAllTransports();
 
         message.append("TRANSPORTS:\n");
         for (Transport t : transports) {
@@ -125,24 +139,18 @@ public class PortController {
     }
 
     public Transport findTransportById(String transportId) {
-
-        for (Transport t : transports) {
-            if (t.getId().equals(transportId)) {
-                return t;
-            }
-        }
-            return null;
+        return transportRepository.findById(transportId);
     }
 
 
     public DockingBay findDockingBayById(String bayId) {
-            for (DockingBay b : dockingBays) {
-                if (b.getId().equals(bayId)) {
-                    return b;
-                }
+        for (DockingBay b : dockingBays) {
+            if (b.getId().equals(bayId)) {
+                return b;
             }
-            return null;
         }
+        return null;
+    }
 
     public MaintenanceTeam findMaintenanceTeamById(String teamId) {
         for (MaintenanceTeam m : maintenanceTeams) {
