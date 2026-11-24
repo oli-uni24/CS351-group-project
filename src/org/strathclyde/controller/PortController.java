@@ -124,4 +124,32 @@ public class PortController {
         return new ServerResponse(false, "Nothing here yet");
     }
 
+    public Transport findTransportById(String transportId) {
+
+        for (Transport t : transports) {
+            if (t.getId().equals(transportId)) {
+                return t;
+            }
+        }
+            return null;
+    }
+
+
+    public DockingBay findDockingBayById(String bayId) {
+            for (DockingBay b : dockingBays) {
+                if (b.getId().equals(bayId)) {
+                    return b;
+                }
+            }
+            return null;
+        }
+
+    public MaintenanceTeam findMaintenanceTeamById(String teamId) {
+        for (MaintenanceTeam m : maintenanceTeams) {
+            if (m.getId().equals(teamId)) {
+                return m;
+            }
+        }
+        return null;
+    }
 }
