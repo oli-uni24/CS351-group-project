@@ -1,7 +1,9 @@
 package org.strathclyde.model;
 
 public enum TransportState {
-
-    WAITING, DOCKED, SERVICING, READY, DEPARTED;
-
+    WAITING,
+    DOCKED,
+    SERVICING,
+    READY,
+    DEPARTED
 }
