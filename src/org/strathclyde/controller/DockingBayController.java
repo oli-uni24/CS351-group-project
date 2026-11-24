@@ -73,7 +73,7 @@ public class DockingBayController {
                 }
 
                 // Exchange the transports between the bays
-                bay1.swapTransport(bay2);
+                bay1.exchangeBay(bay2);
 
                 // Update each transport's bay reference
                 t1.setDockingBay(bay2);
