@@ -11,10 +11,11 @@ import java.util.concurrent.atomic.AtomicInteger;
 //The map is keyed by transport id and keeps transports in a stable id order.
 public class TransportRepository {
 
+    //has the UML design been updated to reflect the below changes?
     private final ConcurrentSkipListMap<String,Transport> transports = new ConcurrentSkipListMap<>();
 
     //Used by createTransport to hand out ids. For example, T1, T2, T3, etc.
-    private final AtomicInteger nextNumber = new AtomicInteger(1);
+    private final AtomicInteger nextNumber = new AtomicInteger(1);  //AtomicInteger does uses something called CAS instructions. Would it be better to use int with synchronisation? Im unsure if Warren will give us teh mark using AtomicInteger
 
     //Add existing transport, Ids must be unique. putIfAbsent checks and adds in one step so
     //two threads adding the same id at the same moment cannot both succeed
@@ -31,7 +32,7 @@ public class TransportRepository {
     public Transport createTransport(int maxCapacity, LocalDateTime scheduledDeparture) {
         while (true){
             String id = "T" + nextNumber.getAndIncrement();
-            Transport transport = new Transport(id, maxCapacity, 0, scheduledDeparture);
+            Transport transport = new Transport(id, maxCapacity, 0, scheduledDeparture); //refactor to avoid creating an object every loop?
 
             //if this id is already used then it will try the next
             if ( transports.putIfAbsent(id, transport) == null){
