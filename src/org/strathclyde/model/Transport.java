@@ -17,20 +17,15 @@ public class Transport {
 
         // Check that an ID has been provided and that it isn't empty.
         if (id == null || id.isBlank()) {
-            throw new IllegalArgumentException("Transport id is requried");
+            throw new IllegalArgumentException("org.strathclyde.model.Transport id is requried");
         }
         // Check that the maximum capacity cannot be a negative number.
         if (maxCapacity < 0) {
             throw new IllegalArgumentException("Max capactiy cannot be negative");
         }
         // Check that the starting cargo amount cannot be negative.
-        if (currentCargo < 0) {
+        if (currentCargo < 0 || currentCargo > maxCapacity) {
             throw new IllegalArgumentException("Current cargo must be between 0 and max capacity");
-        }
-        if (currentCargo > maxCapacity) {
-            throw new IllegalArgumentException(
-                    "Current cargo cannot exceed maximum capacity"
-            );
         }
 
         // If all validation checks pass, assign the supplied values to the attributes.
@@ -41,31 +36,52 @@ public class Transport {
         this.state = TransportState.WAITING;
     }
 
+    //All getters and setters are synchronised so that every thread
+    //always sees the latest values, not an out-of-date copy
     public String getId() {
         return id;
     }
 
-    public TransportState getState() {
+    public synchronized TransportState getState() {
         return state;
     }
 
-    public void setState(TransportState state) {
-        this.state = state;
+    //only allow valid transport state transitions
+    public synchronized void setState(TransportState newState) {
+        if (newState == null) {
+            throw new IllegalArgumentException("Transport state is required");
+        }
+
+        if (state == newState) {
+            return;
+        }
+
+        boolean validTransition =
+                (state == TransportState.WAITING && newState == TransportState.DOCKED)
+                        || (state == TransportState.DOCKED && newState == TransportState.SERVICING)
+                        || (state == TransportState.SERVICING && newState == TransportState.READY)
+                        || (state == TransportState.READY && newState == TransportState.DEPARTED);
+
+        if (!validTransition) {
+            throw new IllegalArgumentException("Invalid transport state transition from " + state + " to " + newState);
+        }
+
+        this.state = newState;
     }
 
-    public DockingBay getDockingBay() {
+    public synchronized DockingBay getDockingBay() {
         return dockingBay;
     }
 
-    public void setDockingBay(DockingBay dockingBay) {
+    public synchronized void setDockingBay(DockingBay dockingBay) {
         this.dockingBay = dockingBay;
     }
 
-    public MaintenanceTeam getMaintenanceTeam() {
+    public synchronized MaintenanceTeam getMaintenanceTeam() {
         return maintenanceTeam;
     }
 
-    public void setMaintenanceTeam(MaintenanceTeam maintenanceTeam) {
+    public synchronized void setMaintenanceTeam(MaintenanceTeam maintenanceTeam) {
         this.maintenanceTeam = maintenanceTeam;
     }
 
@@ -73,19 +89,18 @@ public class Transport {
         return maxCapacity;
     }
 
-    public int getCurrentCargo() {
+    public synchronized int getCurrentCargo() {
         return currentCargo;
     }
 
-    public void setCurrentCargo(int currentCargo) {
-        this.currentCargo = currentCargo;
-    }
+    //no need to set current cargo as addCargo() will set it once
+    //cargo is added
 
-    public LocalDateTime getScheduledDeparture() {
+    public synchronized LocalDateTime getScheduledDeparture() {
         return scheduledDeparture;
     }
 
-    public void setScheduledDeparture(LocalDateTime scheduledDeparture) {
+    public synchronized void setScheduledDeparture(LocalDateTime scheduledDeparture) {
         this.scheduledDeparture = scheduledDeparture;
     }
 
@@ -102,7 +117,7 @@ public class Transport {
         }
 
         // Check that adding the new cargo won't exceed the transport's maximum capacity.
-        if (currentCargo + units > maxCapacity) {
+        if (units > maxCapacity - currentCargo) {
             throw new IllegalArgumentException("Not enough capacity on " + id);
         }
         currentCargo += units;
@@ -111,7 +126,6 @@ public class Transport {
     // Removes cargo from the transport.
     // Synchronized prevents multiple threads from removing or changing cargo simultaneously.
     public synchronized void removeCargo(int units) {
-
 
         if (units <= 0) {
             throw new IllegalArgumentException("Units must be positive");
