@@ -1,3 +1,15 @@
+24/11/26
+scott:
+- fixed compiling issues caused with recently merged master changed
+- stopped the project tracking class files produced in the /out folder
+- added junit5 to the project .iml
+- added comments to bring attention to areas of teh code that do not match the UML design
+- fixed broken junit tests
+
+19-11-2026
+scott:
+- updated PortWanderServer to use a cached thread pool
+- manual testing evidence gathered but am still investigating if automated testing can be performed
 
 15-11-2026
 scott:

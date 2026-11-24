@@ -14,9 +14,6 @@ public class CheckRoleTest {
 
     @ParameterizedTest
     @EnumSource(value = Action.class, names = {
-            "VIEW_BAY",
-            "VIEW_MAINTENANCE_TEAMS",
-            "VIEW_CARGO_QUANTITIES",
             "ALLOCATE_BAY",
             "EXCHANGE_BAY",
             "ASSIGN_MAINTENANCE_TEAM",
@@ -36,10 +33,9 @@ public class CheckRoleTest {
     @EnumSource(value = Action.class, names = {
             "OPEN_BAY",
             "CLOSE_BAY",
-            "VIEW_RESOURCES",
             "ADD_TRANSPORT",
             "VIEW_CONNECTED_CLIENTS",
-            "VIEW_EVENT_LOG"})
+            })
     void whenRoleIsAdminThenOnlyAdminCanPerformAdminActions(Action action) {
         Role adminRole = Role.ADMIN;
         Role clientRole = Role.CLIENT;
@@ -48,13 +44,19 @@ public class CheckRoleTest {
         assertFalse(CheckRole.checkActionAgainstRole(clientRole, action));
     }
 
-    @Test
-    void ClientAndAdminCanBothViewTransport() {
-        Action viewTransport = Action.VIEW_TRANSPORT;
+    @ParameterizedTest
+    @EnumSource(value = Action.class, names = {
+            "VIEW_TRANSPORT",
+            "VIEW_BAY",
+            "VIEW_MAINTENANCE_TEAMS",
+            "VIEW_CARGO_QUANTITIES",
+            "VIEW_EVENT_LOG",
+            "VIEW_RESOURCES"})
+    void ClientAndAdminCanBothViewTransport(Action action) {
         Role adminRole = Role.ADMIN;
         Role clientRole = Role.CLIENT;
 
-        assertTrue(CheckRole.checkActionAgainstRole(adminRole, viewTransport));
-        assertTrue(CheckRole.checkActionAgainstRole(clientRole, viewTransport));
+        assertTrue(CheckRole.checkActionAgainstRole(adminRole, action));
+        assertTrue(CheckRole.checkActionAgainstRole(clientRole, action));
     }
 }

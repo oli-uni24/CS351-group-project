@@ -4,6 +4,7 @@ import org.strathclyde.controller.CargoManagementController;
 import org.strathclyde.controller.DockingBayController;
 import org.strathclyde.controller.PortController;
 import org.strathclyde.controller.TransportController;
+import org.strathclyde.model.TransportRepository;
 import org.strathclyde.service.EventLog;
 
 import java.io.IOException;
@@ -15,16 +16,16 @@ import java.util.concurrent.Executors;
 public class PortWanderServer {
 
     private final static int PORT = 50000;
-    private final static int MAX_CLIENTS = 20; //TODO: fixed threadpool cap?
+    private final ExecutorService threadPool = Executors.newCachedThreadPool();
 
     private final ClientRegistry registry = new ClientRegistry();
     private final EventLog eventLog = new EventLog();
-    private final PortController portController = new PortController(eventLog);
+    private TransportRepository transportRepository = new TransportRepository();
+    private final PortController portController = new PortController(eventLog, transportRepository);
     private final DockingBayController bayController = new DockingBayController(eventLog, portController);
     private final TransportController transportController = new TransportController(eventLog);
-    private final CargoManagementController cargoController = new CargoManagementController();
+    private final CargoManagementController cargoController = new CargoManagementController(transportRepository, eventLog);
 
-    private final ExecutorService threadPool = Executors.newFixedThreadPool(MAX_CLIENTS);
     private ServerSocket serverSocket = null; // listens for incoming connections
 
     public void startServer() throws IOException {
