@@ -20,8 +20,8 @@ public class PortWanderServer {
     private final ClientRegistry registry = new ClientRegistry();
     private final EventLog eventLog = new EventLog();
     private final PortController portController = new PortController(eventLog);
-    private final DockingBayController bayController = new DockingBayController(eventLog, portController.getDockingBays(), portController.getTransports());
-    private final TransportController transportController = new TransportController(bayController, eventLog);
+    private final DockingBayController bayController = new DockingBayController(eventLog, portController);
+    private final TransportController transportController = new TransportController(eventLog);
     private final CargoManagementController cargoController = new CargoManagementController();
 
     private final ExecutorService threadPool = Executors.newFixedThreadPool(MAX_CLIENTS);

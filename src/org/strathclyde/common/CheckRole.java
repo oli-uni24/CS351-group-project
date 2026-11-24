@@ -23,16 +23,22 @@ public class CheckRole {
                 Action.COMPLETE_MAINTENANCE,
                 Action.LOAD_CARGO,
                 Action.UNLOAD_CARGO,
-                Action.TRANSFER_CARGO
-        ));
+                Action.TRANSFER_CARGO,
+                Action.VIEW_RESOURCES,
+                Action.VIEW_EVENT_LOG
+                ));
 
         adminActions = new ArrayList<>(List.of(
-                Action.OPEN_AND_CLOSE_BAY,
+                Action.OPEN_BAY,
+                Action.CLOSE_BAY,
                 Action.VIEW_TRANSPORT,
                 Action.VIEW_RESOURCES,
                 Action.ADD_TRANSPORT,
                 Action.VIEW_CONNECTED_CLIENTS,
-                Action.VIEW_EVENT_LOG
+                Action.VIEW_EVENT_LOG,
+                Action.VIEW_BAY,
+                Action.VIEW_MAINTENANCE_TEAMS,
+                Action.VIEW_CARGO_QUANTITIES
         ));
     }
 
