@@ -49,12 +49,12 @@ public class PortController {
 
         System.out.println("Docking Bays: " + dockingBays.size());
         for (DockingBay b : dockingBays) {
-            System.out.println(" - " + b.getId() + " [" + b.getState() + "]");
+            System.out.println(" - " + b.getId() + " [" + b.getBayState() + "]");
         }
 
         System.out.println("Maintenance Teams: " + maintenanceTeams.size());
         for (MaintenanceTeam m : maintenanceTeams) {
-            System.out.println(" - " + m.getId() + " [" + m.getState() + "]");
+            System.out.println(" - " + m.getId() + " [" + m.getTeamState() + "]");
         }
         System.out.println("--------------------------\n");
     }
@@ -84,7 +84,7 @@ public class PortController {
         for (DockingBay b : dockingBays) {
             message.append(b.getId())
                     .append(" [")
-                    .append(b.getState())
+                    .append(b.getBayState())
                     .append("]\n");
         }
 
@@ -92,7 +92,7 @@ public class PortController {
         for (MaintenanceTeam m : maintenanceTeams) {
             message.append(m.getId())
                     .append(" [")
-                    .append(m.getState())
+                    .append(m.getTeamState())
                     .append("]\n");
         }
 

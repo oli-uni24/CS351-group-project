@@ -30,11 +30,14 @@ public class DockingBay {
         return transport;
     }
 
-    // Assigns a transport to this docking bay.
+    // Assigns transport to this docking bay.
     public synchronized void assignBay(Transport t) {
 
         if (t == null) {
             throw new IllegalArgumentException("Transport is required");
+        }
+        if (bayState == BayState.OCCUPIED) {
+            throw new IllegalArgumentException("Bay " + id + " is occupied");
         }
 
         //stops another bay from assigning the same transport
