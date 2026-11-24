@@ -34,7 +34,8 @@ public class CheckRoleTest {
 
     @ParameterizedTest
     @EnumSource(value = Action.class, names = {
-            "OPEN_AND_CLOSE_BAY",
+            "OPEN_BAY",
+            "CLOSE_BAY",
             "VIEW_RESOURCES",
             "ADD_TRANSPORT",
             "VIEW_CONNECTED_CLIENTS",

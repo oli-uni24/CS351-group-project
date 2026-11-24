@@ -30,7 +30,7 @@ public class ControlTerminal {
 
             //get the users role and send it to the server so that server knows what operations the user is allowed to perform before the user is able to perform operations
             userRole = getUserRole(keyboard);
-            out.println(userRole);
+            out.println("CONNECT " + userRole);
             Thread.sleep(10);
             System.out.println();
 

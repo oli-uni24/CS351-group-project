@@ -1,5 +1,11 @@
 package org.strathclyde.server;
 
+import org.strathclyde.controller.CargoManagementController;
+import org.strathclyde.controller.DockingBayController;
+import org.strathclyde.controller.PortController;
+import org.strathclyde.controller.TransportController;
+import org.strathclyde.service.EventLog;
+
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -10,6 +16,13 @@ public class PortWanderServer {
 
     private final static int PORT = 50000;
     private final static int MAX_CLIENTS = 20; //TODO: fixed threadpool cap?
+
+    private final ClientRegistry registry = new ClientRegistry();
+    private final EventLog eventLog = new EventLog();
+    private final PortController portController = new PortController(eventLog);
+    private final DockingBayController bayController = new DockingBayController(eventLog, portController);
+    private final TransportController transportController = new TransportController(eventLog);
+    private final CargoManagementController cargoController = new CargoManagementController();
 
     private final ExecutorService threadPool = Executors.newFixedThreadPool(MAX_CLIENTS);
     private ServerSocket serverSocket = null; // listens for incoming connections
@@ -25,7 +38,7 @@ public class PortWanderServer {
         while (!serverSocket.isClosed()) {
             try {
                 Socket socket = serverSocket.accept(); // blocks until a client connects
-                threadPool.execute(new ClientSessionHandler(socket));
+                threadPool.execute(new ClientSessionHandler(socket, registry, portController, bayController, transportController, cargoController));
             } catch (IOException e) {
                 if (!serverSocket.isClosed()) { //if its not running, socket was closed on purpose
                     System.err.println("Accept connection failed: " + e.getMessage());
