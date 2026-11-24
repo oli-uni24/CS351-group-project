@@ -41,7 +41,7 @@ public class PersistenceManager {
 
             // Save maintenance team information
             for (MaintenanceTeam m : teams) {
-                writer.println("TEAM," + m.getId() + "," + m.getState());
+                writer.println("TEAM," + m.getId() + "," + m.getTeamState());
             }
 
             System.out.println("Success: Data saved to " + FILE_NAME);
