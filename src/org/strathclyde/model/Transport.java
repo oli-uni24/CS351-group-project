@@ -17,13 +17,13 @@ public class Transport {
 
         // Check that an ID has been provided and that it isn't empty.
         if (id == null || id.isBlank()) {
-            throw new IllegalArgumentException("Transport id is required");
+            throw new IllegalArgumentException("org.strathclyde.model.Transport id is requried");
         }
         // Check that the maximum capacity cannot be a negative number.
         if (maxCapacity < 0) {
-            throw new IllegalArgumentException("Max capacity cannot be negative");
+            throw new IllegalArgumentException("Max capactiy cannot be negative");
         }
-        //Check that the starting cargo is between 0 and the maximum capacity.
+        // Check that the starting cargo amount cannot be negative.
         if (currentCargo < 0 || currentCargo > maxCapacity) {
             throw new IllegalArgumentException("Current cargo must be between 0 and max capacity");
         }

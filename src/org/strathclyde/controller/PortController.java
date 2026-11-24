@@ -5,20 +5,19 @@ import org.strathclyde.model.MaintenanceTeam;
 import org.strathclyde.model.Transport;
 import org.strathclyde.common.ServerResponse;
 import org.strathclyde.service.EventLog;
-import org.strathclyde.model.TransportRepository;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class PortController {
     // These lists act as your "Database" in memory
-    private final TransportRepository transportRepository;
+    private final List<Transport> transports;
     private final List<DockingBay> dockingBays;
     private final List<MaintenanceTeam> maintenanceTeams;
     private final EventLog eventLog;
 
-    public PortController(EventLog eventLog, TransportRepository transportRepository) {
-        this.transportRepository = transportRepository;
+    public PortController(EventLog eventLog) {
+        this.transports = new ArrayList<>();
         this.dockingBays = new ArrayList<>();
         this.maintenanceTeams = new ArrayList<>();
         this.eventLog = eventLog;
@@ -27,15 +26,15 @@ public class PortController {
     // --- Admin Methods ---
 
     public void addTransport(Transport transport) {
-        transportRepository.addTransport(transport);
+        transports.add(transport);
         System.out.println("Admin added transport: " + transport.getId());
     }
 
-    public synchronized void addDockingBay(DockingBay bay) {
+    public void addDockingBay(DockingBay bay) {
         dockingBays.add(bay);
     }
 
-    public synchronized void addMaintenanceTeam(MaintenanceTeam team) {
+    public void addMaintenanceTeam(MaintenanceTeam team) {
         maintenanceTeams.add(team);
     }
 
@@ -43,9 +42,6 @@ public class PortController {
 
     public void viewAllResources() {
         System.out.println("\n--- PORT WANDER STATUS ---");
-
-        List<Transport> transports = transportRepository.getAllTransports();
-
         System.out.println("Transports: " + transports.size());
         for (Transport t : transports) {
             System.out.println(" - " + t.getId() + " [" + t.getState() + "]");
@@ -53,38 +49,28 @@ public class PortController {
 
         System.out.println("Docking Bays: " + dockingBays.size());
         for (DockingBay b : dockingBays) {
-            System.out.println(" - " + b.getId() + " [" + b.getBayState() + "]");
+            System.out.println(" - " + b.getId() + " [" + b.getState() + "]");
         }
 
         System.out.println("Maintenance Teams: " + maintenanceTeams.size());
         for (MaintenanceTeam m : maintenanceTeams) {
-            System.out.println(" - " + m.getId() + " [" + m.getTeamState() + "]");
+            System.out.println(" - " + m.getId() + " [" + m.getState() + "]");
         }
         System.out.println("--------------------------\n");
     }
 
     // Getters to use during integration
-    public synchronized List<Transport> getTransports() {
-        return transportRepository.getAllTransports();
-    }
-
-    public synchronized List<DockingBay> getDockingBays() {
-        return dockingBays;
-    }
-
-    public synchronized List<MaintenanceTeam> getMaintenanceTeams() {
-        return maintenanceTeams;
-    }
+    public List<Transport> getTransports() { return transports; }
+    public List<DockingBay> getDockingBays() { return dockingBays; }
+    public List<MaintenanceTeam> getMaintenanceTeams() { return maintenanceTeams; }
 
     // Added viewResources and viewEventLog
     //all transports, bays, teams and cargo
     // message holds one item per line
-    public ServerResponse viewResources() {
+    public ServerResponse viewResources(){
         StringBuilder message = new StringBuilder();
 
         message.append("--- PORT WANDER STATUS ---\n");
-
-        List<Transport> transports = transportRepository.getAllTransports();
 
         message.append("TRANSPORTS:\n");
         for (Transport t : transports) {
@@ -98,7 +84,7 @@ public class PortController {
         for (DockingBay b : dockingBays) {
             message.append(b.getId())
                     .append(" [")
-                    .append(b.getBayState())
+                    .append(b.getState())
                     .append("]\n");
         }
 
@@ -106,7 +92,7 @@ public class PortController {
         for (MaintenanceTeam m : maintenanceTeams) {
             message.append(m.getId())
                     .append(" [")
-                    .append(m.getTeamState())
+                    .append(m.getState())
                     .append("]\n");
         }
 
@@ -139,18 +125,24 @@ public class PortController {
     }
 
     public Transport findTransportById(String transportId) {
-        return transportRepository.findById(transportId);
+
+        for (Transport t : transports) {
+            if (t.getId().equals(transportId)) {
+                return t;
+            }
+        }
+            return null;
     }
 
 
     public DockingBay findDockingBayById(String bayId) {
-        for (DockingBay b : dockingBays) {
-            if (b.getId().equals(bayId)) {
-                return b;
+            for (DockingBay b : dockingBays) {
+                if (b.getId().equals(bayId)) {
+                    return b;
+                }
             }
+            return null;
         }
-        return null;
-    }
 
     public MaintenanceTeam findMaintenanceTeamById(String teamId) {
         for (MaintenanceTeam m : maintenanceTeams) {
