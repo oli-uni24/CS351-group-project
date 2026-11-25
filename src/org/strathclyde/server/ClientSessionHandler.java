@@ -62,6 +62,18 @@ public class ClientSessionHandler implements Runnable {
         }
     }
 
+    public void sendNotification(String message) {
+        PrintWriter writer = out;
+        if (writer==null) return;
+
+        writer.println(message);
+
+        //Print-writer never throws on a failed write; checkError() tells us the client has gone
+        if(writer.checkError() && client != null){
+            registry.removeClient(client.getId());
+        }
+    }
+
     // return false when client should disconnect
     private boolean processRequest(String line){
        System.out.println("RECIEVED " + line);
