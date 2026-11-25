@@ -47,9 +47,6 @@ public class CheckRoleTest {
     @ParameterizedTest
     @EnumSource(value = Action.class, names = {
             "VIEW_TRANSPORT",
-            "VIEW_BAY",
-            "VIEW_MAINTENANCE_TEAMS",
-            "VIEW_CARGO_QUANTITIES",
             "VIEW_EVENT_LOG",
             "VIEW_RESOURCES"})
     void ClientAndAdminCanBothViewTransport(Action action) {

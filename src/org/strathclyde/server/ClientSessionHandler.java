@@ -151,10 +151,6 @@ public class ClientSessionHandler implements Runnable {
                 return Action.ASSIGN_MAINTENANCE_TEAM;
             case "COMPLETE_MAINTENANCE":
                 return Action.COMPLETE_MAINTENANCE;
-            case "VIEW_BAY":
-                return Action.VIEW_BAY;
-            case "VIEW_MAINTENANCE_TEAMS":
-                return Action.VIEW_MAINTENANCE_TEAMS;
             default:
                 return null;
         }
