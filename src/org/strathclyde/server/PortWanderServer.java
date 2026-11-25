@@ -8,6 +8,7 @@ import org.strathclyde.model.DockingBay;
 import org.strathclyde.model.MaintenanceTeam;
 import org.strathclyde.model.Transport;
 import org.strathclyde.model.TransportRepository;
+import org.strathclyde.service.DepartureScheduler;
 import org.strathclyde.service.EventLog;
 import org.strathclyde.service.PersistenceManager;
 
@@ -30,6 +31,7 @@ public class PortWanderServer {
     private final DockingBayController bayController = new DockingBayController(eventLog, portController);
     private final TransportController transportController = new TransportController(eventLog);
     private final CargoManagementController cargoController = new CargoManagementController(transportRepository, eventLog);
+    private final DepartureScheduler departureScheduler = new DepartureScheduler(transportRepository, eventLog);
 
     private ServerSocket serverSocket = null; // listens for incoming connections
 
@@ -59,6 +61,7 @@ public class PortWanderServer {
         // create the server socket to listen to incoming requests
         serverSocket = new ServerSocket(PORT);
         System.out.println("Server listening on port " + PORT);
+        departureScheduler.start();
         acceptConnections();
     }
 
@@ -82,6 +85,7 @@ public class PortWanderServer {
         } //ignored
         threadPool.shutdown();
         //TODO: add persistence saving data here
+        departureScheduler.stop();
     }
 
     //TODO: move into its own class once pulling other's work
