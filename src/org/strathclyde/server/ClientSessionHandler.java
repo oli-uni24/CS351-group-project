@@ -76,7 +76,6 @@ public class ClientSessionHandler implements Runnable {
 
     // return false when client should disconnect
     private boolean processRequest(String line){
-       System.out.println("RECIEVED " + line);
         if (line.isEmpty()){
            sendResponse("ERROR empty command");
            return true;
