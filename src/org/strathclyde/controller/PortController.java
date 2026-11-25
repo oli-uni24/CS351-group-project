@@ -91,7 +91,9 @@ public class PortController {
             message.append(t.getId())
                     .append(" [")
                     .append(t.getState())
-                    .append("]\n");
+                    .append(", ")
+                    .append(t.getCurrentCargo())
+                    .append(" cargo]\n");
         }
 
         message.append("\nDOCKING BAYS:\n");
