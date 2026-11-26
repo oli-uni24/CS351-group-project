@@ -14,9 +14,6 @@ public class CheckRole {
     static {
         clientActions = new ArrayList<>(List.of(
                 Action.VIEW_TRANSPORT,
-                Action.VIEW_BAY,
-                Action.VIEW_MAINTENANCE_TEAMS,
-                Action.VIEW_CARGO_QUANTITIES,
                 Action.ALLOCATE_BAY,
                 Action.EXCHANGE_BAY,
                 Action.ASSIGN_MAINTENANCE_TEAM,
@@ -35,10 +32,7 @@ public class CheckRole {
                 Action.VIEW_RESOURCES,
                 Action.ADD_TRANSPORT,
                 Action.VIEW_CONNECTED_CLIENTS,
-                Action.VIEW_EVENT_LOG,
-                Action.VIEW_BAY,
-                Action.VIEW_MAINTENANCE_TEAMS,
-                Action.VIEW_CARGO_QUANTITIES
+                Action.VIEW_EVENT_LOG
         ));
     }
 

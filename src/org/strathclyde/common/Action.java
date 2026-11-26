@@ -15,7 +15,4 @@ public enum Action {
     VIEW_CONNECTED_CLIENTS,
     ASSIGN_MAINTENANCE_TEAM,
     COMPLETE_MAINTENANCE,
-    VIEW_BAY,
-    VIEW_MAINTENANCE_TEAMS, //can view the maintenance teams and see which ones are in use and which ones are available
-    VIEW_CARGO_QUANTITIES
 }

@@ -36,6 +36,13 @@ public class Transport {
         this.state = TransportState.WAITING;
     }
 
+    // used only by persistenceManager to restore a saved transport in its saved state
+    // skips the normal transition check, because a loaded transport didnt just change state
+    public Transport(String id, int maxCapacity, int currentCargo, LocalDateTime scheduledDeparture, TransportState savedState){
+        this(id, maxCapacity, currentCargo, scheduledDeparture); //runs existing validation
+        this.state = savedState;
+    }
+
     //All getters and setters are synchronised so that every thread
     //always sees the latest values, not an out-of-date copy
     public String getId() {
