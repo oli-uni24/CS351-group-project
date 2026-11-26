@@ -182,11 +182,6 @@ public class PortController {
         return new ServerResponse(true, message.toString());
     }
 
-
-    private ServerResponse notImplemented() {
-        return new ServerResponse(false, "Nothing here yet");
-    }
-
     public Transport findTransportById(String transportId) {
         return transportRepository.findById(transportId);
     }
