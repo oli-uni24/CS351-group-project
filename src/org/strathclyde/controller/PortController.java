@@ -107,11 +107,6 @@ public class PortController {
             message.append(t.getId())
                     .append(" [")
                     .append(t.getState())
-<<<<<<< HEAD
-                    .append(", ")
-                    .append(t.getCurrentCargo())
-                    .append(" cargo]\n");
-=======
                     .append(", bay ")
                     .append(bayId)
                     .append(", team ")
@@ -121,7 +116,6 @@ public class PortController {
                     .append("/")
                     .append(t.getMaxCapacity())
                     .append("]\n");
->>>>>>> 766ce7c9d1e9bef8896231c14f05e8bc09243a75
         }
 
         // Display docking bays
