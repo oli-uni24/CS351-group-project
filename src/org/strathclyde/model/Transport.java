@@ -113,7 +113,7 @@ public class Transport {
 
     // Adds cargo to the transport.
     // Synchronized prevents multiple threads from changing the cargo simultaneously.
-    public synchronized void addCargo(int units) {
+    public synchronized int addCargo(int units) {
         if (units <= 0) {
             throw new IllegalArgumentException("Units must be positive");
         }
@@ -127,12 +127,12 @@ public class Transport {
         if (units > maxCapacity - currentCargo) {
             throw new IllegalArgumentException("Not enough capacity on " + id);
         }
-        currentCargo += units;
+        return currentCargo += units;
     }
 
     // Removes cargo from the transport.
     // Synchronized prevents multiple threads from removing or changing cargo simultaneously.
-    public synchronized void removeCargo(int units) {
+    public synchronized int removeCargo(int units) {
 
         if (units <= 0) {
             throw new IllegalArgumentException("Units must be positive");
@@ -147,6 +147,6 @@ public class Transport {
         if (units > currentCargo) {
             throw new IllegalArgumentException("Not enough cargo on " + id);
         }
-        currentCargo -= units;
+        return currentCargo -= units;
     }
 }

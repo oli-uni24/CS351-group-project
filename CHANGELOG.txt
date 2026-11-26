@@ -1,3 +1,12 @@
+26/11/26
+scott:
+- added initial threading unit tests
+- added 3 units tests to test the threading related logic in the CargoManagementController class
+- made some adjustments to the threading logic based on findings through testing - e.g. transports were being locked and then unnecessarily being locked again
+- removed unnecessary synchronization
+- added missing releaseBay back
+- added int return type for adding and removing cargo
+
 24/11/26
 scott:
 - fixed compiling issues caused with recently merged master changed
