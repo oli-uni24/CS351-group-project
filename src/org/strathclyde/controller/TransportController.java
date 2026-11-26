@@ -1,46 +1,63 @@
 package org.strathclyde.controller;
 
-import org.strathclyde.model.MaintenanceTeam;
-import org.strathclyde.model.Transport;
-import org.strathclyde.model.TransportState;
+import com.sun.tools.javac.Main;
+import org.strathclyde.model.*;
 import org.strathclyde.service.EventLog;
 import org.strathclyde.common.ServerResponse;
+import org.strathclyde.service.PersistenceManager;
+
+import java.time.LocalDateTime;
+import java.time.format.DateTimeParseException;
 
 //TODO: remove not implemented method when implemented
 
 public class TransportController {
 
     private final EventLog eventLog;
+    private final TransportRepository transportRepository;
+    private final PortController portController;
 
-    public TransportController( EventLog eventLog) {
+    public TransportController( EventLog eventLog, TransportRepository transportRepository, PortController portController) {
         this.eventLog = eventLog;
+        this.transportRepository = transportRepository;
+        this.portController = portController;
     }
 
+    //Adds a new transport
+    public ServerResponse addTransport(int maxCapacity, String departureTime) {
 
-    public void assignTeam(MaintenanceTeam team, Transport transport) {
-        // Lock the transport to prevent two teams being assigned at once
-        synchronized (transport) {
-            if(team == null){
-                throw new IllegalStateException("Maintenance team cannot be null.");
-            }
-            if (transport.getState() != TransportState.DOCKED) {
-                throw new IllegalStateException("Transport must be DOCKED to receive maintenance.");
+        try {
+            if (departureTime == null || departureTime.isBlank()) {
+                return new ServerResponse(false,
+                        "Departure time is required");
             }
 
-            // This will throw an error if the team is already busy
-            team.assignTeam(transport);
+            LocalDateTime departure = LocalDateTime.parse(departureTime);
 
-            transport.setMaintenanceTeam(team);
-            transport.setState(TransportState.SERVICING);
+            Transport transport =
+                    transportRepository.createTransport(maxCapacity, departure);
 
-            // Record successful maintenance assignment
             eventLog.recordEvent(
-                    "MAINTENANCE_ASSIGNMENT",
+                    "TRANSPORT_CREATED",
                     transport.getId(),
-                    team.getId(),
-                    "Maintenance team assigned"
+                    "PORT",
+                    "Transport created successfully"
             );
+
+            PersistenceManager.saveData(portController.getTransports(), portController.getDockingBays(), portController.getMaintenanceTeams());
+
+            return new ServerResponse(true,
+                    "Transport " + transport.getId() + " created successfully");
+
+
+        } catch (DateTimeParseException e) {
+            return new ServerResponse(false,
+                    "Invalid departure time. Use format YYYY-MM-DDTHH:MM");
+
+        } catch (IllegalArgumentException e) {
+            return new ServerResponse(false, e.getMessage());
         }
+
     }
 
     public void completeMaintenance(Transport transport) {
@@ -70,25 +87,116 @@ public class TransportController {
         }
     }
 
-    public ServerResponse addTransport(int maxCapacity, String departureTime) {
-        return notImplemented();
-    }
+    //Returns details of one transport
+    public ServerResponse viewTransport(String transportId){
 
-    //one transport's details
-    //message has one item per line
-    public ServerResponse viewTransport(){
-        return notImplemented();
+
+            //Look up the transport using its ID.
+            //If it doesnt exist, then unsuccessful response is returned
+            Transport transport = portController.findTransportById(transportId);
+
+            if (transport == null) {
+                return new ServerResponse(false,
+                        "Transport " + transportId + " not found");
+            }
+
+            //Store the transport details in local variables.
+            //This will allow us to be able to build the response after releasing the lock
+            DockingBay bay;
+            MaintenanceTeam team;
+            String state;
+            int cargo;
+            LocalDateTime departure;
+
+            //Synched so transport on another thread cant change
+            //This helps prevent the response from containing a mixture
+            // of old and new values if another client updates the transport
+            synchronized (transport) {
+                bay = transport.getDockingBay();
+                team = transport.getMaintenanceTeam();
+                state = transport.getState().toString();
+                cargo = transport.getCurrentCargo();
+                departure = transport.getScheduledDeparture();
+            }
+
+        // Display "none" if the transport has no allocated bay or team.
+        String bayId = transport.getDockingBay() == null ? "none" : bay.getId();
+        String teamId = transport.getMaintenanceTeam() == null ? "none" : team.getId();
+
+        // Build a readable response containing the transport's details.
+        // Cargo is displayed as current quantity / maximum capacity.
+        String message = "--- TRANSPORT DETAILS --- \n"
+                + "ID: " + transport.getId() + "\n"
+                + "State " + transport.getState() + "\n"
+                + "Docking Bay: " + bayId + "\n"
+                + "Maintenance Team: " + teamId + "\n"
+                + "Cargo " + transport.getCurrentCargo() + "\n"
+                + "/" + transport.getMaxCapacity() + "\n"
+                + "Scheduled Departue: " + transport.getScheduledDeparture();
+
+        PersistenceManager.saveData(portController.getTransports(), portController.getDockingBays(), portController.getMaintenanceTeams());
+
+        //return the transport details
+        return new ServerResponse(true, message);
     }
 
     public ServerResponse assignTeam(String transportId, String teamId){
-        return notImplemented();
+        Transport transport = portController.findTransportById(transportId);
+        MaintenanceTeam team = portController.findMaintenanceTeamById(teamId);
+
+        if (transport == null) {
+            return new ServerResponse(false, "Transport " + transportId + " not found");
+        }
+
+
+        if (team == null) {
+            return new ServerResponse(false, "Transport " + teamId + " not found");
+        }
+
+        try {
+
+            //MainteanceTeam handles the actual assignment and state changes
+            team.assignTeam(transport);
+
+            //Record successful maintenance assignment
+            eventLog.recordEvent("MAINTENANCE_ASSIGNMENT", transport.getId(), team.getId(), "Maintenance team assigned");
+
+            PersistenceManager.saveData(portController.getTransports(), portController.getDockingBays(), portController.getMaintenanceTeams());
+
+            return new ServerResponse(true, "Maintenance team " + teamId + " assigned to transport" + transportId);
+
+        } catch (IllegalArgumentException | IllegalStateException e) {
+            return new ServerResponse(false, e.getMessage());
+        }
     }
 
     public ServerResponse completeMaintenance(String transportId){
-        return notImplemented();
+        Transport transport = portController.findTransportById(transportId);
+
+        if (transport == null) {
+            return new ServerResponse(false, "Transport " + transportId + " not found");
+        }
+
+        try {
+            MaintenanceTeam team = transport.getMaintenanceTeam();
+
+            if (team == null) {
+                return new ServerResponse(false, "No Maintenace team assigned to this transport");
+            }
+
+            //Handles the completion and state changes
+            team.completeMaintenance();
+
+            //Record successful maintenance completion
+            eventLog.recordEvent("MAINTENANCE_COMPLETED", transport.getId(), team.getId(), "Maintenance completed successfully");
+
+            PersistenceManager.saveData(portController.getTransports(), portController.getDockingBays(), portController.getMaintenanceTeams());
+
+            return new ServerResponse(true, "Maintenance completed for transport " + transportId);
+
+        } catch (IllegalArgumentException | IllegalStateException e){
+            return new ServerResponse(false, e.getMessage());
+        }
     }
 
-    private ServerResponse notImplemented() {
-        return new ServerResponse(false, "Nothing here yet");
-    }
 }

@@ -13,7 +13,7 @@ public class PersistenceManager {
 
     private static final String FILE_NAME = "spaceport_data.txt";
 
-    public void saveData(List<Transport> transports,
+    public static void saveData(List<Transport> transports,
                          List<DockingBay> bays,
                          List<MaintenanceTeam> teams) {
 

@@ -5,6 +5,8 @@ import org.strathclyde.model.Transport;
 import org.strathclyde.service.EventLog;
 import org.strathclyde.model.TransportState;
 import org.strathclyde.common.ServerResponse;
+import org.strathclyde.service.PersistenceManager;
+
 import java.util.List;
 
 //TODO: remove not implemented method when implemented
@@ -25,6 +27,7 @@ public class DockingBayController {
         bay.assignBay(transport);
         // Update the transport's docking bay reference
         transport.setDockingBay(bay);
+        PersistenceManager.saveData(portController.getTransports(), portController.getDockingBays(), portController.getMaintenanceTeams());
     }
 
     /**
@@ -86,6 +89,7 @@ public class DockingBayController {
                         bay1.getId() + " and " + bay2.getId(),
                         "Successfully exchanged docking bays"
                 );
+                PersistenceManager.saveData(portController.getTransports(), portController.getDockingBays(), portController.getMaintenanceTeams());
             }
         }
     }
@@ -130,6 +134,8 @@ public class DockingBayController {
                     "Transport allocated to docking bay"
             );
 
+            PersistenceManager.saveData(portController.getTransports(), portController.getDockingBays(), portController.getMaintenanceTeams());
+
             return new ServerResponse(true, "Bay allocated successfully.");
 
         } catch (IllegalStateException | IllegalArgumentException e) {
@@ -155,6 +161,8 @@ public class DockingBayController {
         try {
             // Call the existing method that performs the exchange
             exchangeBay(firstTransport, secondTransport);
+
+            PersistenceManager.saveData(portController.getTransports(), portController.getDockingBays(), portController.getMaintenanceTeams());
 
             return new ServerResponse(true, "Docking bays exchanged successfully.");
 
@@ -183,6 +191,8 @@ public class DockingBayController {
                     "Docking bay opened"
             );
 
+            PersistenceManager.saveData(portController.getTransports(), portController.getDockingBays(), portController.getMaintenanceTeams());
+
             return new ServerResponse(true, "Docking bay opened successfully.");
 
         } catch (IllegalStateException | IllegalArgumentException e) {
@@ -209,6 +219,8 @@ public class DockingBayController {
                     bayId,
                     "Docking bay closed"
             );
+
+            PersistenceManager.saveData(portController.getTransports(), portController.getDockingBays(), portController.getMaintenanceTeams());
 
             return new ServerResponse(true, "Docking bay closed successfully.");
 
