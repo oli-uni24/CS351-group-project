@@ -98,7 +98,6 @@ public class CargoManagementController {
                         from.addCargo(units);
                         throw e;
                     }
-                    PersistenceManager.saveData(portController.getTransports(), portController.getDockingBays(), portController.getMaintenanceTeams());
 
                     eventLog.recordEvent("TRANSFER_CARGO", from.getId(), to.getId(),
                             "Transferred " + units + " units from " + from.getId() + " to " + to.getId());

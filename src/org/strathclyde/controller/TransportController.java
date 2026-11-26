@@ -134,8 +134,6 @@ public class TransportController {
                 + "/" + transport.getMaxCapacity() + "\n"
                 + "Scheduled Departue: " + transport.getScheduledDeparture();
 
-        PersistenceManager.saveData(portController.getTransports(), portController.getDockingBays(), portController.getMaintenanceTeams());
-
         //return the transport details
         return new ServerResponse(true, message);
     }
