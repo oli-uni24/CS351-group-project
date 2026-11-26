@@ -1,12 +1,15 @@
 
 package org.strathclyde.model;
 
+import org.strathclyde.service.PersistenceManager;
+
 public class DockingBay {
 
     // The ID should not change once the bay has been created.
     private final String id;
     private BayState state;
     private Transport allocatedTransport;
+
 
     public DockingBay(String id) {
 
@@ -207,6 +210,7 @@ public class DockingBay {
         }
 
         state = BayState.CLOSED;
+
     }
 
     public synchronized void openBay() {
@@ -217,5 +221,6 @@ public class DockingBay {
         }
 
         state = BayState.AVAILABLE;
+
     }
 }
