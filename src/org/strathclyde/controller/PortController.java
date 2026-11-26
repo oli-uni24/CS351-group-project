@@ -80,41 +80,90 @@ public class PortController {
     //all transports, bays, teams and cargo
     // message holds one item per line
     public ServerResponse viewResources() {
+
         StringBuilder message = new StringBuilder();
 
         message.append("--- PORT WANDER STATUS ---\n");
 
-        List<Transport> transports = transportRepository.getAllTransports();
+        // Display transports
+        message.append("\nTRANSPORTS:\n");
 
-        message.append("TRANSPORTS:\n");
-        for (Transport t : transports) {
+        for (Transport t : transportRepository.getAllTransports()) {
+
+            // Get the assigned docking bay
+            String bayId = "none";
+
+            if (t.getDockingBay() != null) {
+                bayId = t.getDockingBay().getId();
+            }
+
+            // Get the assigned maintenance team
+            String teamId = "none";
+
+            if (t.getMaintenanceTeam() != null) {
+                teamId = t.getMaintenanceTeam().getId();
+            }
+
             message.append(t.getId())
                     .append(" [")
                     .append(t.getState())
+<<<<<<< HEAD
                     .append(", ")
                     .append(t.getCurrentCargo())
                     .append(" cargo]\n");
+=======
+                    .append(", bay ")
+                    .append(bayId)
+                    .append(", team ")
+                    .append(teamId)
+                    .append(", cargo ")
+                    .append(t.getCurrentCargo())
+                    .append("/")
+                    .append(t.getMaxCapacity())
+                    .append("]\n");
+>>>>>>> 766ce7c9d1e9bef8896231c14f05e8bc09243a75
         }
 
+        // Display docking bays
         message.append("\nDOCKING BAYS:\n");
+
         for (DockingBay b : dockingBays) {
+
+            String transportId = "none";
+
+            if (b.getAllocatedTransport() != null) {
+                transportId = b.getAllocatedTransport().getId();
+            }
+
             message.append(b.getId())
                     .append(" [")
                     .append(b.getBayState())
+                    .append(", transport ")
+                    .append(transportId)
                     .append("]\n");
         }
 
+        // Display maintenance teams
         message.append("\nMAINTENANCE TEAMS:\n");
+
         for (MaintenanceTeam m : maintenanceTeams) {
+
+            String transportId = "none";
+
+            if (m.getTransport() != null) {
+                transportId = m.getTransport().getId();
+            }
+
             message.append(m.getId())
                     .append(" [")
                     .append(m.getTeamState())
+                    .append(", transport ")
+                    .append(transportId)
                     .append("]\n");
         }
 
         return new ServerResponse(true, message.toString());
     }
-
     //event log
     // message holds one event per line
     public ServerResponse viewEventLog() {
