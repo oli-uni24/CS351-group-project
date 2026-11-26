@@ -17,7 +17,7 @@ public class TransportController {
     private final TransportRepository transportRepository;
     private final PortController portController;
 
-    public TransportController( EventLog eventLog, TransportRepository transportRepository, PortController portController) {
+    public TransportController(EventLog eventLog, TransportRepository transportRepository, PortController portController) {
         this.eventLog = eventLog;
         this.transportRepository = transportRepository;
         this.portController = portController;
@@ -88,36 +88,36 @@ public class TransportController {
     }
 
     //Returns details of one transport
-    public ServerResponse viewTransport(String transportId){
+    public ServerResponse viewTransport(String transportId) {
 
 
-            //Look up the transport using its ID.
-            //If it doesnt exist, then unsuccessful response is returned
-            Transport transport = portController.findTransportById(transportId);
+        //Look up the transport using its ID.
+        //If it doesnt exist, then unsuccessful response is returned
+        Transport transport = portController.findTransportById(transportId);
 
-            if (transport == null) {
-                return new ServerResponse(false,
-                        "Transport " + transportId + " not found");
-            }
+        if (transport == null) {
+            return new ServerResponse(false,
+                    "Transport " + transportId + " not found");
+        }
 
-            //Store the transport details in local variables.
-            //This will allow us to be able to build the response after releasing the lock
-            DockingBay bay;
-            MaintenanceTeam team;
-            String state;
-            int cargo;
-            LocalDateTime departure;
+        //Store the transport details in local variables.
+        //This will allow us to be able to build the response after releasing the lock
+        DockingBay bay;
+        MaintenanceTeam team;
+        String state;
+        int cargo;
+        LocalDateTime departure;
 
-            //Synched so transport on another thread cant change
-            //This helps prevent the response from containing a mixture
-            // of old and new values if another client updates the transport
-            synchronized (transport) {
-                bay = transport.getDockingBay();
-                team = transport.getMaintenanceTeam();
-                state = transport.getState().toString();
-                cargo = transport.getCurrentCargo();
-                departure = transport.getScheduledDeparture();
-            }
+        //Synched so transport on another thread cant change
+        //This helps prevent the response from containing a mixture
+        // of old and new values if another client updates the transport
+        synchronized (transport) {
+            bay = transport.getDockingBay();
+            team = transport.getMaintenanceTeam();
+            state = transport.getState().toString();
+            cargo = transport.getCurrentCargo();
+            departure = transport.getScheduledDeparture();
+        }
 
         // Display "none" if the transport has no allocated bay or team.
         String bayId = transport.getDockingBay() == null ? "none" : bay.getId();
@@ -138,7 +138,7 @@ public class TransportController {
         return new ServerResponse(true, message);
     }
 
-    public ServerResponse assignTeam(String transportId, String teamId){
+    public ServerResponse assignTeam(String transportId, String teamId) {
         Transport transport = portController.findTransportById(transportId);
         MaintenanceTeam team = portController.findMaintenanceTeamById(teamId);
 
@@ -168,7 +168,7 @@ public class TransportController {
         }
     }
 
-    public ServerResponse completeMaintenance(String transportId){
+    public ServerResponse completeMaintenance(String transportId) {
         Transport transport = portController.findTransportById(transportId);
 
         if (transport == null) {
@@ -192,7 +192,7 @@ public class TransportController {
 
             return new ServerResponse(true, "Maintenance completed for transport " + transportId);
 
-        } catch (IllegalArgumentException | IllegalStateException e){
+        } catch (IllegalArgumentException | IllegalStateException e) {
             return new ServerResponse(false, e.getMessage());
         }
     }
