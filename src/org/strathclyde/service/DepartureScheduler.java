@@ -53,7 +53,7 @@ public class DepartureScheduler {
                     if (bay != null) {
                         bayId = bay.getId();
 
-                        bay.releaseBay();
+                        bay.releaseBay(transport);
                         transport.setDockingBay(null);
                     }
 
