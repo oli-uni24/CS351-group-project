@@ -6,6 +6,7 @@ import org.strathclyde.model.Transport;
 import org.strathclyde.common.ServerResponse;
 import org.strathclyde.service.EventLog;
 import org.strathclyde.model.TransportRepository;
+import org.strathclyde.service.PersistenceManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,14 +30,17 @@ public class PortController {
     public void addTransport(Transport transport) {
         transportRepository.addTransport(transport);
         System.out.println("Admin added transport: " + transport.getId());
+        PersistenceManager.saveData(getTransports(), getDockingBays(), getMaintenanceTeams());
     }
 
     public synchronized void addDockingBay(DockingBay bay) {
         dockingBays.add(bay);
+        PersistenceManager.saveData(getTransports(), getDockingBays(), getMaintenanceTeams());
     }
 
     public synchronized void addMaintenanceTeam(MaintenanceTeam team) {
         maintenanceTeams.add(team);
+        PersistenceManager.saveData(getTransports(), getDockingBays(), getMaintenanceTeams());
     }
 
     // --- View Methods for my testing---
