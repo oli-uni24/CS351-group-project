@@ -31,6 +31,7 @@ public class PortWanderServer {
     private final DockingBayController bayController = new DockingBayController(eventLog, portController);
     private final TransportController transportController = new TransportController(eventLog, transportRepository, portController);
     private final CargoManagementController cargoController = new CargoManagementController(transportRepository, eventLog, portController);
+    private final DepartureScheduler departureScheduler = new DepartureScheduler(transportRepository, eventLog);
 
     private ServerSocket serverSocket = null; // listens for incoming connections
 
