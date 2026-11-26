@@ -14,6 +14,7 @@ public class CargoManagementController {
     private final TransportRepository transportRepository;
     private final EventLog eventLog;
     private final PortController portController;
+
     public CargoManagementController(TransportRepository transportRepository, EventLog eventLog, PortController portController) {
         this.transportRepository = transportRepository;
         this.eventLog = eventLog;
@@ -70,7 +71,7 @@ public class CargoManagementController {
 
     public ServerResponse transferCargo(String fromId, String toId, int units) {
 
-            if (fromId != null && fromId.equals(toId)) {
+        if (fromId != null && fromId.equals(toId)) {
             return new ServerResponse(false, "Cannot transfer cargo to the same transport");
         }
 
@@ -103,6 +104,7 @@ public class CargoManagementController {
                             "Transferred " + units + " units from " + from.getId() + " to " + to.getId());
 
                     PersistenceManager.saveData(portController.getTransports(), portController.getDockingBays(), portController.getMaintenanceTeams());
+
 
                     return new ServerResponse(true, "Transferred " + units + " units from "
                             + from.getId() + " to " + to.getId());
