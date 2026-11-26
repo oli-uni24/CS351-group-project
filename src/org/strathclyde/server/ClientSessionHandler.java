@@ -62,9 +62,20 @@ public class ClientSessionHandler implements Runnable {
         }
     }
 
+    public void sendNotification(String message) {
+        PrintWriter writer = out;
+        if (writer==null) return;
+
+        writer.println(message);
+
+        //Print-writer never throws on a failed write; checkError() tells us the client has gone
+        if(writer.checkError() && client != null){
+            registry.removeClient(client.getId());
+        }
+    }
+
     // return false when client should disconnect
     private boolean processRequest(String line){
-       System.out.println("RECIEVED " + line);
         if (line.isEmpty()){
            sendResponse("ERROR empty command");
            return true;
@@ -139,10 +150,6 @@ public class ClientSessionHandler implements Runnable {
                 return Action.ASSIGN_MAINTENANCE_TEAM;
             case "COMPLETE_MAINTENANCE":
                 return Action.COMPLETE_MAINTENANCE;
-            case "VIEW_BAY":
-                return Action.VIEW_BAY;
-            case "VIEW_MAINTENANCE_TEAMS":
-                return Action.VIEW_MAINTENANCE_TEAMS;
             default:
                 return null;
         }

@@ -216,9 +216,4 @@ public class DockingBayController {
             return new ServerResponse(false, e.getMessage());
         }
     }
-
-
-    private ServerResponse notImplemented() {
-        return new ServerResponse(false, "Nothing here yet");
-    }
 }
