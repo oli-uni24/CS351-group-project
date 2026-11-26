@@ -91,10 +91,9 @@ public class PersistenceManager {
                             id,
                             maxCapacity,
                             currentCargo,
-                            departure
+                            departure,
+                            TransportState.valueOf(parts[5])
                     );
-
-                    t.setState(TransportState.valueOf(parts[5]));
 
                     transports.add(t);
 
