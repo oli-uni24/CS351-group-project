@@ -52,7 +52,7 @@ public class TransportController {
 
         } catch (DateTimeParseException e) {
             return new ServerResponse(false,
-                    "Invalid departure time. Use format YYYY-MM-DDTHH:MM");
+                    "Invalid departure time. Use format YYYY-MM-DDTHH:MM e.g. 2026-11-27T10:00");
 
         } catch (IllegalArgumentException e) {
             return new ServerResponse(false, e.getMessage());
