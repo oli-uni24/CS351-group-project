@@ -44,7 +44,7 @@ public class MaintenanceTeam {
         synchronized (t) {
 
             if (teamState != TeamState.AVAILABLE) {
-                throw new IllegalArgumentException("Team " + t.getMaintenanceTeam().getId() + " is not available");
+                throw new IllegalArgumentException("Team " + id + " is not available");
             }
 
             // Check that the transport is currently DOCKED before maintenance can begin.

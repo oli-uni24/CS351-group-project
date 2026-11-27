@@ -56,33 +56,6 @@ public class TransportController {
 
     }
 
-    public void completeMaintenance(Transport transport) {
-        synchronized (transport) {
-            if (transport.getState() != TransportState.SERVICING) {
-                throw new IllegalStateException("Transport must be SERVICING to complete maintenance.");
-            }
-            MaintenanceTeam team = transport.getMaintenanceTeam();
-            if (team == null) {
-                throw new IllegalStateException(
-                        "No maintenance team assigned to this transport."
-                );
-            }
-
-            team.completeMaintenance();
-            transport.setMaintenanceTeam(null);
-
-            transport.setState(TransportState.READY);
-
-            // Record successful maintenance completion
-            eventLog.recordEvent(
-                    "MAINTENANCE_COMPLETED",
-                    transport.getId(),
-                    team.getId(),
-                    "Maintenance completed successfully"
-            );
-        }
-    }
-
     //Returns details of one transport
     public ServerResponse viewTransport(String transportId) {
 
