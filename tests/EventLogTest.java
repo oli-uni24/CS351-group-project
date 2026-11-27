@@ -8,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class EventLogTest {
 
+    // Test ID 7
     @Test
     void testRecordEvent() {
         EventLog eventLog = new EventLog();
@@ -28,6 +29,7 @@ public class EventLogTest {
         assertTrue(events.get(0).contains("Transport departed successfully"));
     }
 
+    // Test ID 8
     @Test
     void testMultipleEventsAreRecorded() {
         EventLog eventLog = new EventLog();
@@ -38,6 +40,7 @@ public class EventLogTest {
         assertEquals(2, eventLog.getEvents().size());
     }
 
+    // Test ID 9
     @Test
     void testListenerReceivesEvent() {
         EventLog eventLog = new EventLog();
@@ -51,6 +54,7 @@ public class EventLogTest {
         assertTrue(receivedEvent.get().contains("ARRIVAL"));
     }
 
+    // Test ID 10
     @Test
     void testGetEventsReturnsUnmodifiableList() {
         EventLog eventLog = new EventLog();
@@ -65,6 +69,7 @@ public class EventLogTest {
         );
     }
 
+    // Test ID 11
     @Test
     void testEmptyEventLog() {
         EventLog eventLog = new EventLog();

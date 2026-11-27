@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class DepartureSchedulerTest {
 
-    // Test ID 1
+    // Test ID 4
     @Test
     void dueReadyTransportDepartsAndItsBayIsReleased() throws InterruptedException {
         TransportRepository repository = new TransportRepository();
@@ -47,7 +47,7 @@ class DepartureSchedulerTest {
         }
     }
 
-    // Test ID 2
+    // Test ID 5
     @Test
     void dueReadyTransportWithoutBayStillDeparts() throws InterruptedException {
         TransportRepository repository = new TransportRepository();
@@ -78,7 +78,7 @@ class DepartureSchedulerTest {
         }
     }
 
-    // Test ID 3
+    // Test ID 6
     @Test
     void futureDepartureIsNotProcessedImmediately() throws InterruptedException {
         TransportRepository repository = new TransportRepository();
