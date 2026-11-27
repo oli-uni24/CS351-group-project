@@ -40,7 +40,7 @@ public class PersistenceManager {
                 writer.println("TRANSPORT,"
                         + t.getId() + ","
                         + t.getMaxCapacity() + ","
-                        + t.getCurrentCargo() + ","
+                        + t.getCargoQuantity() + ","
                         + departure + ","
                         + t.getState() + ","
                         + (bay==null ? "none" : bay.getId())+ ","

@@ -83,7 +83,7 @@ public class TransportController {
             bay = transport.getDockingBay();
             team = transport.getMaintenanceTeam();
             state = transport.getState().toString();
-            cargo = transport.getCurrentCargo();
+            cargo = transport.getCargoQuantity();
             departure = transport.getScheduledDeparture();
         }
 
@@ -98,7 +98,7 @@ public class TransportController {
                 + "State " + transport.getState() + "\n"
                 + "Docking Bay: " + bayId + "\n"
                 + "Maintenance Team: " + teamId + "\n"
-                + "Cargo " + transport.getCurrentCargo() + "\n"
+                + "Cargo " + transport.getCargoQuantity() + "\n"
                 + "/" + transport.getMaxCapacity() + "\n"
                 + "Scheduled Departue: " + transport.getScheduledDeparture();
 

@@ -6,7 +6,6 @@ import org.strathclyde.model.Transport;
 import org.strathclyde.common.ServerResponse;
 import org.strathclyde.service.EventLog;
 import org.strathclyde.model.TransportRepository;
-import org.strathclyde.service.PersistenceManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -89,7 +88,7 @@ public class PortController {
                     .append(", team ")
                     .append(teamId)
                     .append(", cargo ")
-                    .append(t.getCurrentCargo())
+                    .append(t.getCargoQuantity())
                     .append("/")
                     .append(t.getMaxCapacity())
                     .append("]\n");

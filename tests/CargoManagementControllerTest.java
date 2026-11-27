@@ -47,7 +47,7 @@ public class CargoManagementControllerTest {
             future.get(3, TimeUnit.SECONDS);
         }
         executor.shutdown();
-        assertEquals(200, transport.getCurrentCargo());
+        assertEquals(200, transport.getCargoQuantity());
     }
 
     //Test ID 2
@@ -78,7 +78,7 @@ public class CargoManagementControllerTest {
             future.get(3, TimeUnit.SECONDS);
         }
         executor.shutdown();
-        assertEquals(0, transport.getCurrentCargo());
+        assertEquals(0, transport.getCargoQuantity());
     }
 
 
@@ -115,9 +115,56 @@ public class CargoManagementControllerTest {
             future.get(3, TimeUnit.SECONDS);
         }
         executor.shutdown();
-        assertEquals(800, origionalTransport.getCurrentCargo());
-        assertEquals(800, newTransport.getCurrentCargo());
+        assertEquals(800, origionalTransport.getCargoQuantity());
+        assertEquals(800, newTransport.getCargoQuantity());
     }
+
+    //could add a test where you try to perform multiple operations at the same time. For example, one thread tries to add cargo while another tries to remove cargo at the same time
+
+    //Test ID 4
+    @RepeatedTest(20)
+    void whenMultipleThreadsLoadAndUnloadCargo_thenTransportCargoIsUpdatedToTheRightAmount() throws ExecutionException, InterruptedException, TimeoutException {
+
+        Transport transport = transportRepository.createTransport(300, LocalDateTime.now());
+        transport.setState(TransportState.DOCKED);
+        transport.addCargo(100);
+
+        String transportId = transport.getId();
+        int numberOfLoadThreads = 50;
+        int numberOfUnloadThreads = 50;
+        ExecutorService executor = Executors.newFixedThreadPool(100);
+        CountDownLatch countDownLatch = new CountDownLatch(1);
+        List<Future<Transport>> futures = new ArrayList<>();
+
+        for (int i = 0; i < numberOfLoadThreads; i++) {
+            futures.add(executor.submit(() ->
+            {
+                countDownLatch.await();
+                cargoManagementController.loadCargo(transportId, 1);
+                return null;
+            }));
+        }
+
+        for (int i = 0; i < numberOfUnloadThreads; i++) {
+            futures.add(executor.submit(() ->
+            {
+                countDownLatch.await();
+                cargoManagementController.unloadCargo(transportId, 1);
+                return null;
+            }));
+        }
+
+        countDownLatch.countDown();
+
+        for (Future<Transport> future : futures) {
+            future.get(3, TimeUnit.SECONDS);
+        }
+        executor.shutdown();
+        assertEquals(100, transport.getCargoQuantity());
+    }
+
+
+    //if there is time then ad some more tests to do with transferring and loading and unloading cargo all at the same time with multiple threads
 
 
 }
