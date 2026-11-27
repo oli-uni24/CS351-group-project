@@ -50,7 +50,7 @@ public class MaintenanceTeam {
             // Check that the transport is currently DOCKED before maintenance can begin.
             // A transport must be docked before a maintenance team can work on it.
             if (t.getState() != TransportState.DOCKED) {
-                throw new IllegalArgumentException("Transport " + t.getId() + "is not docked");
+                throw new IllegalArgumentException("Transport " + t.getId() + " is not docked");
             }
 
             if (t.getMaintenanceTeam() != null) {

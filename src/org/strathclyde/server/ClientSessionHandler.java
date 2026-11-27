@@ -97,6 +97,17 @@ public class ClientSessionHandler implements Runnable {
             handleConnect(parts);
             return true;
         }
+        if(command.equals("HELP")){
+            sendResponse("OK");
+            sendResponse("CONNECT client|admin, QUIT, HELP");
+            sendResponse("VIEW_RESOURCES, VIEW_TRANSPORT id, VIEW_EVENT_LOG");
+            sendResponse("ALLOCATE_BAY transportId bayId, EXCHANGE_BAY idA idB");
+            sendResponse("ASSIGN_MAINTENANCE_TEAM transportId teamId, COMPLETE_MAINTENANCE transportId");
+            sendResponse("LOAD_CARGO id units, UNLOAD_CARGO id units, TRANSFER_CRAGO  fromId toId units");
+            sendResponse("Admin only: ADD_TRANSPORT maxCapacity YYYY-MM-DDTHH:MM, OPEN_BAY id, CLOSE_BAY id, VIEW_CONNECTED_CLIENTS");
+            sendResponse("END");
+            return true;
+        }
 
         // get the action requested
         Action action = toAction(command);
@@ -226,7 +237,11 @@ public class ClientSessionHandler implements Runnable {
                     if (units != null) sendResult(cargoController.transferCargo(parts[1], parts[2], units));
                 }
                 break;
-                //TODO: add VIEW_TRANSPORT once TransportController has viewTransport(transportId)
+            case "VIEW_TRANSPORT":
+                if(needArgs(parts, 1, "VIEW_TRANSPORT transportId")){
+                    sendView(transportController.viewTransport(parts[1]));
+                }
+                break;
             default:
                 sendResponse("ERROR " + command + " is not available yet");
         }

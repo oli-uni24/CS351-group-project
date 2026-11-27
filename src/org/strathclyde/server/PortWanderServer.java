@@ -94,7 +94,6 @@ public class PortWanderServer {
                 portController.getMaintenanceTeams());
     }
 
-    //TODO: move into its own class once pulling other's work
     public static void main(String[] args) throws IOException {
         PortWanderServer server = new PortWanderServer();
         Runtime.getRuntime().addShutdownHook(new Thread(server::shutdown));

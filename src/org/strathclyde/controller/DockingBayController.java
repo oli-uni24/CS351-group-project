@@ -5,11 +5,6 @@ import org.strathclyde.model.Transport;
 import org.strathclyde.service.EventLog;
 import org.strathclyde.model.TransportState;
 import org.strathclyde.common.ServerResponse;
-import org.strathclyde.service.PersistenceManager;
-
-import java.util.List;
-
-//TODO: remove not implemented method when implemented
 
 public class DockingBayController {
     private final EventLog eventLog;

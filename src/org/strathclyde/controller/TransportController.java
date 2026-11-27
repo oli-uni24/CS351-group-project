@@ -3,7 +3,6 @@ package org.strathclyde.controller;
 import org.strathclyde.model.*;
 import org.strathclyde.service.EventLog;
 import org.strathclyde.common.ServerResponse;
-import org.strathclyde.service.PersistenceManager;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;

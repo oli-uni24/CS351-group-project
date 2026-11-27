@@ -1,7 +1,6 @@
 package org.strathclyde.server;
 
 import org.strathclyde.client.Client;
-import org.strathclyde.client.NotificationListener;
 
 import java.util.function.Consumer;
 
