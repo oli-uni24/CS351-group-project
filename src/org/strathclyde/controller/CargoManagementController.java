@@ -31,8 +31,6 @@ public class CargoManagementController {
 
             eventLog.recordEvent("LOAD_CARGO", transport.getId(), bayIdOf(transport), "Loaded " + units + " units (cargo now " + updatedCargoQuantity + "/" + transport.getMaxCapacity() + ")");
 
-            PersistenceManager.saveData(portController.getTransports(), portController.getDockingBays(), portController.getMaintenanceTeams());
-
             return new ServerResponse(true, "Loaded " + units + " units onto " + transport.getId()
                     + " (cargo now " + updatedCargoQuantity + "/" + transport.getMaxCapacity() + ")");
 
@@ -54,8 +52,6 @@ public class CargoManagementController {
             eventLog.recordEvent("UNLOAD_CARGO", transport.getId(), bayIdOf(transport),
                     "Unloaded " + units + " units (cargo now "
                             + updatedCargoQuantity + "/" + transport.getMaxCapacity() + ")");
-
-            PersistenceManager.saveData(portController.getTransports(), portController.getDockingBays(), portController.getMaintenanceTeams());
 
             return new ServerResponse(true, "Unloaded " + units + " units from " + transport.getId()
                     + " (cargo now " + updatedCargoQuantity + "/" + transport.getMaxCapacity() + ")");
@@ -93,8 +89,6 @@ public class CargoManagementController {
 
             eventLog.recordEvent("TRANSFER_CARGO", from.getId(), to.getId(),
                     "Transferred " + units + " units from " + from.getId() + " to " + to.getId());
-
-            PersistenceManager.saveData(portController.getTransports(), portController.getDockingBays(), portController.getMaintenanceTeams());
 
             return new ServerResponse(true, "Transferred " + units + " units from "
                     + from.getId() + " to " + to.getId());
