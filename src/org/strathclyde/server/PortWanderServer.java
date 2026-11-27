@@ -56,6 +56,8 @@ public class PortWanderServer {
         for (MaintenanceTeam m : teams){
             portController.addMaintenanceTeam(m);
         }
+
+        eventLog.loadEvents(persistence.loadEvents());
     }
 
     public void startServer() throws IOException {
@@ -92,6 +94,7 @@ public class PortWanderServer {
                 portController.getTransports(),
                 portController.getDockingBays(),
                 portController.getMaintenanceTeams());
+        PersistenceManager.saveEvents(eventLog.getEvents());
     }
 
   public static void main(String[] args) throws IOException {

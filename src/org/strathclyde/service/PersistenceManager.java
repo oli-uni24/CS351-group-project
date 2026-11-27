@@ -7,11 +7,13 @@ import org.strathclyde.model.TransportState;
 
 import java.io.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 public class PersistenceManager {
 
     private static final String FILE_NAME = "spaceport_data.txt";
+    private static final String EVENT_FILE_NAME= "spaceport_events.txt";
 
     public static void saveData(List<Transport> transports,
                          List<DockingBay> bays,
@@ -131,6 +133,40 @@ public class PersistenceManager {
         } catch (IOException | IllegalArgumentException e) {
             System.err.println("Error loading data: " + e.getMessage());
         }
+    }
+
+    public static void saveEvents(List<String> events) {
+        try (PrintWriter writer = new PrintWriter(new FileWriter(EVENT_FILE_NAME))){
+            for (String event : events) {
+                writer.println(event);
+            }
+            System.out.println("Success: Event log saved to " + EVENT_FILE_NAME);
+        } catch (IOException e){
+            System.err.println("Error saving event log: " + e.getMessage());
+        }
+    }
+
+    public List<String> loadEvents(){
+        List<String> events = new ArrayList<>();
+        File file = new File(EVENT_FILE_NAME);
+
+        if (!file.exists()){
+            System.out.println("No event log file found. Starting with empty log.");
+            return events;
+        }
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))){
+            String line;
+            while ((line = reader.readLine()) != null){
+                if(!line.isBlank()){
+                    events.add(line);
+                }
+            }
+            System.out.println("Success: Event log loaded from " + EVENT_FILE_NAME);
+        } catch (IOException e){
+            System.err.println("Error loading event log: " + e.getMessage());
+        }
+        return events;
     }
 }
 
