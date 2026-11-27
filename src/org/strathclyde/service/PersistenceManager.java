@@ -8,7 +8,9 @@ import org.strathclyde.model.TransportState;
 import java.io.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class PersistenceManager {
 
@@ -28,12 +30,21 @@ public class PersistenceManager {
                         ? ""
                         : t.getScheduledDeparture().toString();
 
+                DockingBay bay;
+                MaintenanceTeam team;
+                synchronized (t){
+                    bay = t.getDockingBay();
+                    team = t.getMaintenanceTeam();
+                }
+
                 writer.println("TRANSPORT,"
                         + t.getId() + ","
                         + t.getMaxCapacity() + ","
                         + t.getCurrentCargo() + ","
                         + departure + ","
-                        + t.getState());
+                        + t.getState() + ","
+                        + (bay==null ? "none" : bay.getId())+ ","
+                        + (team ==null ? "none" : team.getId()));
             }
 
             // Save docking bay information
@@ -68,6 +79,9 @@ public class PersistenceManager {
 
             String line;
 
+            Map<String, String> bayLinks = new HashMap<>(); //transportId -> bayId
+            Map<String, String> teamLinks = new HashMap<>(); //transportId -> teamId
+
             while ((line = reader.readLine()) != null) {
 
                 String[] parts = line.split(",", -1);
@@ -77,7 +91,7 @@ public class PersistenceManager {
                 if (type.equals("TRANSPORT")) {
 
                     // Transport records now contain six fields
-                    if (parts.length != 6) {
+                    if (parts.length != 6 && parts.length !=8) {
                         continue;
                     }
 
@@ -98,6 +112,11 @@ public class PersistenceManager {
                     );
 
                     transports.add(t);
+
+                    if (parts.length ==8){
+                        if(!parts[6].equals("none")) bayLinks.put(id, parts[6]);
+                        if(!parts[7].equals("none")) bayLinks.put(id, parts[7]);
+                    }
 
                 } else if (type.equals("BAY")) {
 
@@ -125,6 +144,34 @@ public class PersistenceManager {
                     MaintenanceTeam m = new MaintenanceTeam(id);
 
                     teams.add(m);
+                }
+            }
+
+            for (Transport t : transports){
+                String bayId = bayLinks.get(t.getId());
+                if (bayId != null){
+                    DockingBay found = null;
+                    for (DockingBay b : bays) {
+                        if (b.getId().equals(bayId)) found = b;
+                    }
+                    if(found != null){
+                        found.restoreTransport(t);
+                    } else {
+                        System.err.println("Saved bay " + bayId + " for " + t.getId() + " not found");
+                    }
+                }
+
+                String teamId = teamLinks.get(t.getId());
+                if (teamId != null){
+                    MaintenanceTeam found = null;
+                    for(MaintenanceTeam m : teams){
+                        if (m.getId().equals(teamId)) found = m;
+                    }
+                    if (found != null){
+                        found.restoreTransport(t);
+                    } else {
+                        System.err.println("Saved team " + teamId + " for " + t.getId() + " not found");
+                    }
                 }
             }
 
