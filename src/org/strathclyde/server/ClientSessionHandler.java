@@ -81,7 +81,7 @@ public class ClientSessionHandler implements Runnable {
            return true;
        }
 
-        String[] parts = line.split("\\s+");
+        String[] parts = line.toUpperCase().split("\\s+");
         String command = parts[0].toUpperCase();
 
         //only able to connect or quit before connecting

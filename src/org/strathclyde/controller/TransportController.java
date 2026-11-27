@@ -1,6 +1,5 @@
 package org.strathclyde.controller;
 
-import com.sun.tools.javac.Main;
 import org.strathclyde.model.*;
 import org.strathclyde.service.EventLog;
 import org.strathclyde.common.ServerResponse;
@@ -8,8 +7,6 @@ import org.strathclyde.service.PersistenceManager;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
-
-//TODO: remove not implemented method when implemented
 
 public class TransportController {
 
@@ -44,7 +41,6 @@ public class TransportController {
                     "Transport created successfully"
             );
 
-            PersistenceManager.saveData(portController.getTransports(), portController.getDockingBays(), portController.getMaintenanceTeams());
 
             return new ServerResponse(true,
                     "Transport " + transport.getId() + " created successfully");
@@ -159,8 +155,6 @@ public class TransportController {
             //Record successful maintenance assignment
             eventLog.recordEvent("MAINTENANCE_ASSIGNMENT", transport.getId(), team.getId(), "Maintenance team assigned");
 
-            PersistenceManager.saveData(portController.getTransports(), portController.getDockingBays(), portController.getMaintenanceTeams());
-
             return new ServerResponse(true, "Maintenance team " + teamId + " assigned to transport" + transportId);
 
         } catch (IllegalArgumentException | IllegalStateException e) {
@@ -187,8 +181,6 @@ public class TransportController {
 
             //Record successful maintenance completion
             eventLog.recordEvent("MAINTENANCE_COMPLETED", transport.getId(), team.getId(), "Maintenance completed successfully");
-
-            PersistenceManager.saveData(portController.getTransports(), portController.getDockingBays(), portController.getMaintenanceTeams());
 
             return new ServerResponse(true, "Maintenance completed for transport " + transportId);
 

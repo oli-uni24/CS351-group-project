@@ -32,6 +32,7 @@ public class PortWanderServer {
     private final TransportController transportController = new TransportController(eventLog, transportRepository, portController);
     private final CargoManagementController cargoController = new CargoManagementController(transportRepository, eventLog, portController);
     private final DepartureScheduler departureScheduler = new DepartureScheduler(transportRepository, eventLog);
+    private final PersistenceManager persistenceManager = new PersistenceManager();
 
     private ServerSocket serverSocket = null; // listens for incoming connections
 
@@ -83,9 +84,14 @@ public class PortWanderServer {
             if (serverSocket != null) serverSocket.close(); //accept() will throw and close loop
         } catch (IOException e) {
         } //ignored
-        threadPool.shutdown();
-        //TODO: add persistence saving data here
+        //save everthing on shutdown
+        System.out.println("System saving and shutting down...");
         departureScheduler.stop();
+        threadPool.shutdown();
+        persistenceManager.saveData(
+                portController.getTransports(),
+                portController.getDockingBays(),
+                portController.getMaintenanceTeams());
     }
 
     //TODO: move into its own class once pulling other's work
