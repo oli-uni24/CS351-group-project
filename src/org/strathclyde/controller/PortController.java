@@ -43,30 +43,6 @@ public class PortController {
         PersistenceManager.saveData(getTransports(), getDockingBays(), getMaintenanceTeams());
     }
 
-    // --- View Methods for my testing---
-
-    public void viewAllResources() {
-        System.out.println("\n--- PORT WANDER STATUS ---");
-
-        List<Transport> transports = transportRepository.getAllTransports();
-
-        System.out.println("Transports: " + transports.size());
-        for (Transport t : transports) {
-            System.out.println(" - " + t.getId() + " [" + t.getState() + "]");
-        }
-
-        System.out.println("Docking Bays: " + dockingBays.size());
-        for (DockingBay b : dockingBays) {
-            System.out.println(" - " + b.getId() + " [" + b.getBayState() + "]");
-        }
-
-        System.out.println("Maintenance Teams: " + maintenanceTeams.size());
-        for (MaintenanceTeam m : maintenanceTeams) {
-            System.out.println(" - " + m.getId() + " [" + m.getTeamState() + "]");
-        }
-        System.out.println("--------------------------\n");
-    }
-
     // Getters to use during integration
     public synchronized List<Transport> getTransports() {
         return transportRepository.getAllTransports();
