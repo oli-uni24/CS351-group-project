@@ -10,10 +10,10 @@ public class Transport {
     private DockingBay dockingBay;
     private MaintenanceTeam maintenanceTeam;
     private final int maxCapacity;
-    private int cargoQuantity;
+    private int currentCargo;
     private LocalDateTime scheduledDeparture;
 
-    public Transport(String id, int maxCapacity, int cargoQuantity, LocalDateTime scheduledDeparture) {
+    public Transport(String id, int maxCapacity, int currentCargo, LocalDateTime scheduledDeparture) {
 
         // Check that an ID has been provided and that it isn't empty.
         if (id == null || id.isBlank()) {
@@ -24,22 +24,22 @@ public class Transport {
             throw new IllegalArgumentException("Max capacity cannot be negative");
         }
         //Check that the starting cargo is between 0 and the maximum capacity.
-        if (cargoQuantity < 0 || cargoQuantity > maxCapacity) {
+        if (currentCargo < 0 || currentCargo > maxCapacity) {
             throw new IllegalArgumentException("Current cargo must be between 0 and max capacity");
         }
 
         // If all validation checks pass, assign the supplied values to the attributes.
         this.id = id;
         this.maxCapacity = maxCapacity;
-        this.cargoQuantity = cargoQuantity;
+        this.currentCargo = currentCargo;
         this.scheduledDeparture = scheduledDeparture;
         this.state = TransportState.WAITING;
     }
 
     // used only by persistenceManager to restore a saved transport in its saved state
     // skips the normal transition check, because a loaded transport didnt just change state
-    public Transport(String id, int maxCapacity, int cargoQuantity, LocalDateTime scheduledDeparture, TransportState savedState) {
-        this(id, maxCapacity, cargoQuantity, scheduledDeparture); //runs existing validation
+    public Transport(String id, int maxCapacity, int currentCargo, LocalDateTime scheduledDeparture, TransportState savedState) {
+        this(id, maxCapacity, currentCargo, scheduledDeparture); //runs existing validation
         this.state = savedState;
     }
 
@@ -96,8 +96,8 @@ public class Transport {
         return maxCapacity;
     }
 
-    public synchronized int getCargoQuantity() {
-        return cargoQuantity;
+    public synchronized int getCurrentCargo() {
+        return currentCargo;
     }
 
     //no need to set current cargo as addCargo() will set it once
@@ -124,10 +124,10 @@ public class Transport {
         }
 
         // Check that adding the new cargo won't exceed the transport's maximum capacity.
-        if (units > maxCapacity - cargoQuantity) {
+        if (units > maxCapacity - currentCargo) {
             throw new IllegalArgumentException("Not enough capacity on " + id);
         }
-        return cargoQuantity += units;
+        return currentCargo += units;
     }
 
     // Removes cargo from the transport.
@@ -144,9 +144,9 @@ public class Transport {
                 state != TransportState.READY) {
             throw new IllegalArgumentException("Cannot change cargo while " + state);
         }
-        if (units > cargoQuantity) {
+        if (units > currentCargo) {
             throw new IllegalArgumentException("Not enough cargo on " + id);
         }
-        return cargoQuantity -= units;
+        return currentCargo -= units;
     }
 }

@@ -200,8 +200,8 @@ public class TransportTest {
 
     //NOTE - im skipping testing the basic synchronized setters and getters. I will come back to these if there is time but for now I will be testing the more complicated threading logic
 
-
-    @RepeatedTest(50)
+    //Test ID 8
+    @RepeatedTest(80)
     void whenMultipleThreadsAddCargo_thenTotalCargoIsAdded() throws ExecutionException, InterruptedException, TimeoutException {
         Transport transport = transportRepository.createTransport(300, LocalDateTime.now());
         transport.setState(TransportState.DOCKED);
@@ -223,7 +223,7 @@ public class TransportTest {
             future.get(3, TimeUnit.SECONDS);
         }
         executor.shutdown();
-        assertEquals(100, transport.getCargoQuantity());
+        assertEquals(100, transport.getCurrentCargo());
 
 
     }

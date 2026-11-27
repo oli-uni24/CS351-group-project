@@ -47,7 +47,7 @@ public class CargoManagementControllerTest {
             future.get(3, TimeUnit.SECONDS);
         }
         executor.shutdown();
-        assertEquals(200, transport.getCargoQuantity());
+        assertEquals(200, transport.getCurrentCargo());
     }
 
     //Test ID 2
@@ -78,7 +78,7 @@ public class CargoManagementControllerTest {
             future.get(3, TimeUnit.SECONDS);
         }
         executor.shutdown();
-        assertEquals(0, transport.getCargoQuantity());
+        assertEquals(0, transport.getCurrentCargo());
     }
 
 
@@ -115,8 +115,8 @@ public class CargoManagementControllerTest {
             future.get(3, TimeUnit.SECONDS);
         }
         executor.shutdown();
-        assertEquals(800, origionalTransport.getCargoQuantity());
-        assertEquals(800, newTransport.getCargoQuantity());
+        assertEquals(800, origionalTransport.getCurrentCargo());
+        assertEquals(800, newTransport.getCurrentCargo());
     }
 
     //could add a test where you try to perform multiple operations at the same time. For example, one thread tries to add cargo while another tries to remove cargo at the same time
@@ -160,7 +160,7 @@ public class CargoManagementControllerTest {
             future.get(3, TimeUnit.SECONDS);
         }
         executor.shutdown();
-        assertEquals(100, transport.getCargoQuantity());
+        assertEquals(100, transport.getCurrentCargo());
     }
 
 

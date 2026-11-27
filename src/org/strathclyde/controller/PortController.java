@@ -88,7 +88,7 @@ public class PortController {
                     .append(", team ")
                     .append(teamId)
                     .append(", cargo ")
-                    .append(t.getCargoQuantity())
+                    .append(t.getCurrentCargo())
                     .append("/")
                     .append(t.getMaxCapacity())
                     .append("]\n");
