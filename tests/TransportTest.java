@@ -228,5 +228,34 @@ public class TransportTest {
 
     }
 
+    //Test ID 9
+    @RepeatedTest(80)
+    void whenMultipleThreadsRemoveCargo_thenTotalCargoIsCorrectlyRemoved() throws ExecutionException, InterruptedException, TimeoutException {
+        Transport transport = transportRepository.createTransport(300, LocalDateTime.now());
+        transport.setState(TransportState.DOCKED);
+        transport.addCargo(200);
+        ExecutorService executor = Executors.newFixedThreadPool(10);
+        CountDownLatch countDownLatch = new CountDownLatch(1);
+        List<Future<Integer>> futures = new ArrayList<>();
+        int quantityOfCargoToBeRemoved = 10;
+
+        for (int i = 0; i < 10; i++) {
+            futures.add(
+                    executor.submit(() -> {
+                        countDownLatch.await();
+                        return transport.removeCargo(quantityOfCargoToBeRemoved);
+                    }));
+        }
+        countDownLatch.countDown();
+
+        for (Future<Integer> future : futures) {
+            future.get(3, TimeUnit.SECONDS);
+        }
+        executor.shutdown();
+        assertEquals(100, transport.getCurrentCargo());
+
+
+    }
+
 
 }
