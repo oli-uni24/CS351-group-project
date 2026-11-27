@@ -223,4 +223,11 @@ public class DockingBay {
         state = BayState.AVAILABLE;
 
     }
+
+    //used only by persistence manager to restore a saved allocation
+    public synchronized void restoreTransport(Transport transport){
+        this.allocatedTransport = transport;
+        this.state = BayState.OCCUPIED;
+        transport.setDockingBay(this);
+    }
 }

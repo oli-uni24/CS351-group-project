@@ -40,12 +40,11 @@ public class PortWanderServer {
         // send every new event to all connected terminals
         eventLog.addListener(new NotificationService(registry));
 
-        PersistenceManager persistence = new PersistenceManager();
         List<Transport> transports = new ArrayList<>();
         List<DockingBay> bays = new ArrayList<>();
         List<MaintenanceTeam> teams = new ArrayList<>();
 
-        persistence.loadData(transports, bays, teams);
+        persistenceManager.loadData(transports, bays, teams);
 
         for(Transport t : transports){
             transportRepository.addTransport(t);
@@ -56,6 +55,8 @@ public class PortWanderServer {
         for (MaintenanceTeam m : teams){
             portController.addMaintenanceTeam(m);
         }
+
+        eventLog.loadEvents(persistenceManager.loadEvents());
     }
 
     public void startServer() throws IOException {
@@ -92,6 +93,7 @@ public class PortWanderServer {
                 portController.getTransports(),
                 portController.getDockingBays(),
                 portController.getMaintenanceTeams());
+        PersistenceManager.saveEvents(eventLog.getEvents());
     }
 
   public static void main(String[] args) throws IOException {

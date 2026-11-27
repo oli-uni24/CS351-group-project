@@ -54,6 +54,12 @@ public class EventLog {
         );
     }
 
+    // Restores events saved on previous run. It doesn't notify listeners or prints,
+    // because the events aren't new
+    public synchronized void loadEvents(List<String> savedEvents){
+        events.addAll(savedEvents);
+    }
+
     public void addListener(Consumer<String> listener){
         listeners.add(listener);
     }

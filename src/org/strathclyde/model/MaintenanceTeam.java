@@ -104,4 +104,12 @@ public class MaintenanceTeam {
 
         }
     }
+
+    //used only by persistence manager to restore a saved assignment
+    public synchronized void restoreTransport(Transport transport){
+        this.transport = transport;
+        this.teamState = TeamState.BUSY;
+        transport.setMaintenanceTeam(this);
+    }
+
 }
