@@ -94,7 +94,7 @@ public class PortWanderServer {
                 portController.getMaintenanceTeams());
     }
 
-    public static void main(String[] args) throws IOException {
+  public static void main(String[] args) throws IOException {
         PortWanderServer server = new PortWanderServer();
         Runtime.getRuntime().addShutdownHook(new Thread(server::shutdown));
         server.startServer();
