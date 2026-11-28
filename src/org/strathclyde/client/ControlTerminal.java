@@ -33,6 +33,7 @@ public class ControlTerminal {
             out.println("CONNECT " + userRole);
             Thread.sleep(10);
             System.out.println();
+            System.out.println("Type HELP to see a list of commands.");
 
             //Main thread that sends what user types
             String line;

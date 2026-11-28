@@ -84,6 +84,18 @@ public class ClientSessionHandler implements Runnable {
         String[] parts = line.toUpperCase().split("\\s+");
         String command = parts[0].toUpperCase();
 
+        if(command.equals("HELP")){
+            sendResponse("OK");
+            sendResponse("CONNECT client|admin, QUIT, HELP");
+            sendResponse("VIEW_RESOURCES, VIEW_TRANSPORT id, VIEW_EVENT_LOG");
+            sendResponse("ALLOCATE_BAY transportId bayId, EXCHANGE_BAY idA idB");
+            sendResponse("ASSIGN_MAINTENANCE_TEAM transportId teamId, COMPLETE_MAINTENANCE transportId");
+            sendResponse("LOAD_CARGO id units, UNLOAD_CARGO id units, TRANSFER_CARGO  fromId toId units");
+            sendResponse("Admin only: ADD_TRANSPORT maxCapacity YYYY-MM-DDTHH:MM, OPEN_BAY id, CLOSE_BAY id, VIEW_CONNECTED_CLIENTS");
+            sendResponse("END");
+            return true;
+        }
+
         //only able to connect or quit before connecting
         if (connectedUsersRole == null && !command.equals("CONNECT") && !command.equals("QUIT")){
             sendResponse("ERROR not connected, send CONNECT client or admin first");
@@ -95,17 +107,6 @@ public class ClientSessionHandler implements Runnable {
         }
         if(command.equals("CONNECT")){
             handleConnect(parts);
-            return true;
-        }
-        if(command.equals("HELP")){
-            sendResponse("OK");
-            sendResponse("CONNECT client|admin, QUIT, HELP");
-            sendResponse("VIEW_RESOURCES, VIEW_TRANSPORT id, VIEW_EVENT_LOG");
-            sendResponse("ALLOCATE_BAY transportId bayId, EXCHANGE_BAY idA idB");
-            sendResponse("ASSIGN_MAINTENANCE_TEAM transportId teamId, COMPLETE_MAINTENANCE transportId");
-            sendResponse("LOAD_CARGO id units, UNLOAD_CARGO id units, TRANSFER_CRAGO  fromId toId units");
-            sendResponse("Admin only: ADD_TRANSPORT maxCapacity YYYY-MM-DDTHH:MM, OPEN_BAY id, CLOSE_BAY id, VIEW_CONNECTED_CLIENTS");
-            sendResponse("END");
             return true;
         }
 
