@@ -115,7 +115,7 @@ public class PersistenceManager {
 
                     if (parts.length ==8){
                         if(!parts[6].equals("none")) bayLinks.put(id, parts[6]);
-                        if(!parts[7].equals("none")) bayLinks.put(id, parts[7]);
+                        if(!parts[7].equals("none")) teamLinks.put(id, parts[7]);
                     }
 
                 } else if (type.equals("BAY")) {
