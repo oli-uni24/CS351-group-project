@@ -127,7 +127,7 @@ public class TransportController {
             //Record successful maintenance assignment
             eventLog.recordEvent("MAINTENANCE_ASSIGNMENT", transport.getId(), team.getId(), "Maintenance team assigned");
 
-            return new ServerResponse(true, "Maintenance team " + teamId + " assigned to transport" + transportId);
+            return new ServerResponse(true, "Maintenance team " + teamId + " assigned to transport " + transportId);
 
         } catch (IllegalArgumentException | IllegalStateException e) {
             return new ServerResponse(false, e.getMessage());
